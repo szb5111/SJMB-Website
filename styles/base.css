@@ -1,0 +1,260 @@
+/* ============================================================
+   base.css — reset, typography defaults, shared primitives.
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; }
+
+html {
+  /* On the native-scroll path (touch / reduced motion) anchor and focus
+     scrolling must clear the fixed header. */
+  scroll-padding-top: 6rem;
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: auto;      /* handled by the custom smooth-scroll engine */
+  background: var(--void);
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: 1.6;
+  color: var(--fg);
+  background: var(--void);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overscroll-behavior-y: none;
+}
+
+body.is-locked { overflow: hidden; }
+
+img, svg, video, canvas { display: block; max-width: 100%; }
+img { height: auto; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { background: none; border: 0; padding: 0; cursor: pointer; }
+a { color: inherit; text-decoration: none; }
+
+:focus-visible {
+  outline: 2px solid var(--ember);
+  outline-offset: 3px;
+  border-radius: var(--radius);
+}
+
+::selection { background: var(--ember); color: var(--void); }
+
+/* ---------- Scroll container ---------- */
+#scroll-content { will-change: transform; }
+
+/* ---------- Layout ---------- */
+.shell {
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+.bay { padding-block: var(--bay); position: relative; }
+.section { position: relative; }
+
+/* 12-col grid for editorial layouts */
+.grid12 {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: clamp(1rem, 2vw, 2rem);
+}
+@media (max-width: 860px) { .grid12 { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+
+/* ---------- Typography primitives ---------- */
+.display {
+  font-family: var(--font-display);
+  /* --opsz picks an optical tier (see tokens.css); --soft/--wonk stay on the
+     brand's warp unless an element deliberately steps off it. Custom props
+     inherit, so an <em> inside a heading picks up its parent's tier for free. */
+  --opsz: var(--opsz-poster);
+  --soft: 30;
+  --wonk: 1;
+  font-variation-settings: 'opsz' var(--opsz), 'SOFT' var(--soft), 'WONK' var(--wonk);
+  font-weight: 600;
+  line-height: 0.92;
+  letter-spacing: var(--track, -0.022em);
+  text-wrap: balance;
+}
+.display--tight { line-height: 0.86; --track: -0.032em; }
+
+/* Optical size tiers for .display. Tracking travels with the tier:
+   big Fraunces needs negative tracking, Fraunces at reading size does not. */
+.display--lg { --opsz: var(--opsz-display); --track: -0.018em; }
+.display--md { --opsz: var(--opsz-title);   --track: -0.008em; }
+.display--sm { --opsz: var(--opsz-text);    --track: 0em; }
+
+h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 600; line-height: 1.05; }
+
+.kicker {
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--ember);
+  display: flex;
+  align-items: center;
+  gap: 0.85em;
+}
+.kicker::before {
+  content: '';
+  width: clamp(1.75rem, 4vw, 3.5rem);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--ember));
+  flex: none;
+}
+.kicker--blue { color: var(--tide); }
+.kicker--blue::before { background: linear-gradient(90deg, transparent, var(--tide)); }
+
+.index-num {
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  color: var(--bone-ghost);
+  letter-spacing: 0.15em;
+}
+
+.lede {
+  font-size: var(--step-1);
+  line-height: 1.5;
+  color: var(--bone-dim);
+  max-width: 46ch;
+  text-wrap: pretty;
+}
+
+.prose p {
+  color: var(--bone-dim);
+  max-width: var(--measure);
+  text-wrap: pretty;
+}
+.prose p + p { margin-top: 1.15em; }
+
+.emph {
+  font-family: var(--font-display);
+  font-style: italic;
+  /* Sits inline in 16–20px body copy, so it takes the text tier, not the
+     poster tier — at opsz 144 an inline italic goes thin and disappears. */
+  font-variation-settings: 'opsz' var(--opsz-text), var(--wonk-on);
+  color: var(--bone);
+}
+
+.hl { color: var(--ember); }
+.hl-blue { color: var(--tide); }
+
+/* ---------- Rules & hairlines ---------- */
+.rule { height: 1px; background: var(--line); border: 0; }
+.rule--fade { background: linear-gradient(90deg, var(--line-strong), transparent); }
+
+/* ---------- Buttons ---------- */
+.btn {
+  --btn-fg: var(--void);
+  --btn-bg: var(--ember);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7em;
+  padding: 0.95em 1.6em;
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--btn-fg);
+  background: var(--btn-bg);
+  border-radius: var(--radius-pill);
+  isolation: isolate;
+  overflow: hidden;
+  transition: transform var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out);
+  box-shadow: 0 0 0 0 color-mix(in oklab, var(--ember) 40%, transparent);
+  white-space: nowrap;
+}
+.btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 140% at 50% 120%, var(--ember-100), transparent 60%);
+  opacity: 0;
+  transition: opacity var(--dur) var(--ease-out);
+  z-index: -1;
+}
+.btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px -12px color-mix(in oklab, var(--ember) 70%, transparent); }
+.btn:hover::after { opacity: 1; }
+.btn:active { transform: translateY(0); }
+.btn .btn-arrow { transition: transform var(--dur) var(--ease-out); }
+.btn:hover .btn-arrow { transform: translateX(4px); }
+
+.btn--ghost {
+  --btn-fg: var(--bone);
+  --btn-bg: transparent;
+  border: 1px solid var(--line-strong);
+  backdrop-filter: blur(8px);
+}
+.btn--ghost:hover { border-color: var(--ember); color: var(--ember); box-shadow: none; }
+.btn--ghost::after { display: none; }
+
+/* ---------- Reveal system (driven by src/ui/reveal.js) ---------- */
+[data-reveal] { opacity: 0; }
+[data-reveal="up"]    { transform: translate3d(0, 28px, 0); }
+[data-reveal="fade"]  { transform: none; }
+[data-reveal="left"]  { transform: translate3d(-24px, 0, 0); }
+[data-reveal="right"] { transform: translate3d(24px, 0, 0); }
+[data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+  transition: opacity 900ms var(--ease-out), transform 1100ms var(--ease-out);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+/* Per-line masked text reveal */
+.line-mask { display: block; overflow: hidden; }
+.line-mask > span {
+  display: block;
+  transform: translate3d(0, 105%, 0);
+  transition: transform 1100ms var(--ease-out);
+  transition-delay: var(--line-delay, 0ms);
+}
+.is-in .line-mask > span, .line-mask.is-in > span { transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] { opacity: 1 !important; transform: none !important; }
+  .line-mask > span { transform: none !important; }
+}
+
+/* ---------- Utility ---------- */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0;
+  margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.skip-link {
+  position: fixed; top: 0; left: 50%; transform: translate(-50%, -140%);
+  z-index: var(--z-overlay);
+  background: var(--ember); color: var(--void);
+  padding: 0.75rem 1.25rem; font-family: var(--font-mono); font-size: var(--step--1);
+  border-radius: 0 0 var(--radius-md) var(--radius-md); transition: transform var(--dur) var(--ease-out);
+}
+.skip-link:focus-visible { transform: translate(-50%, 0); }
+
+/* Film grain + vignette overlay across the whole page */
+.grain {
+  position: fixed; inset: -50%;
+  z-index: 45;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: var(--grain-url);
+  background-size: 180px 180px;
+  animation: grain 6s steps(6) infinite;
+  mix-blend-mode: overlay;
+}
+@keyframes grain {
+  0%,100% { transform: translate(0,0) }
+  16%     { transform: translate(-2%, 1%) }
+  33%     { transform: translate(1%, -2%) }
+  50%     { transform: translate(-1%, 2%) }
+  66%     { transform: translate(2%, 1%) }
+  83%     { transform: translate(1%, -1%) }
+}
+.vignette {
+  position: fixed; inset: 0; z-index: 44; pointer-events: none;
+  background: radial-gradient(120% 100% at 50% 45%, transparent 45%, rgba(0,0,0,0.55) 100%);
+}
+@media (prefers-reduced-motion: reduce) { .grain { animation: none; } }

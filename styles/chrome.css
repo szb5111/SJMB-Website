@@ -1,0 +1,271 @@
+/* ============================================================
+   chrome.css — preloader, nav, drawer, cursor. The furniture.
+   ============================================================ */
+
+/* ══════════════════════ PRELOADER ══════════════════════
+   Two-stage exit: the lockup leaves first, then the curtain dissolves.
+   A single dissolve reads as "the page appeared"; the staged version reads
+   as a title card being struck. */
+.preloader {
+  position: fixed; inset: 0; z-index: var(--z-overlay);
+  background: var(--void);
+  display: grid; place-items: center;
+  transition: opacity 480ms var(--ease-io), visibility 480ms;
+  /* Pure-CSS failsafe: if main.js never parses, the curtain still lifts. */
+  animation: preloaderFailsafe 1ms linear 12s forwards;
+}
+@keyframes preloaderFailsafe { to { opacity: 0; visibility: hidden; pointer-events: none; } }
+
+.preloader.is-done { opacity: 0; visibility: hidden; pointer-events: none; }
+.preloader__inner {
+  width: min(30rem, 76vw); display: grid; gap: 1.5rem; justify-items: center;
+  transition: opacity 300ms var(--ease-out), transform 520ms var(--ease-out);
+}
+.preloader.is-closing .preloader__inner { opacity: 0; transform: translateY(-0.85rem); }
+
+.preloader__mark { display: flex; gap: 0.06em; overflow: hidden; }
+.preloader__glyph {
+  font-family: var(--font-display); font-weight: 600; font-style: italic;
+  font-variation-settings: 'opsz' 144, 'SOFT' 40, 'WONK' 1;
+  font-size: clamp(3.5rem, 11vw, 6rem); line-height: 1; color: var(--bone);
+  animation: glyphIn 1s var(--ease-out) both;
+}
+.preloader__glyph:nth-child(2) { color: var(--ember); animation-delay: 120ms; }
+@keyframes glyphIn { from { transform: translateY(105%); opacity: 0; } to { transform: none; opacity: 1; } }
+
+.preloader__bar { width: 100%; height: 1px; background: var(--line-strong); overflow: hidden; }
+/* Driven per-frame from JS as transform:scaleX — never `width`, which would
+   both force layout every frame and lag the % readout by the transition. */
+.preloader__bar i {
+  display: block; height: 100%; width: 100%;
+  transform: scaleX(0); transform-origin: left center;
+  background: linear-gradient(90deg, var(--ember), var(--tide));
+}
+.preloader__meta {
+  width: 100%; display: flex; justify-content: space-between;
+  font-family: var(--font-mono); font-size: var(--step--2);
+  letter-spacing: 0.22em; text-transform: uppercase; color: var(--bone-ghost);
+}
+.preloader__label { animation: pulse 2.4s var(--ease-io) infinite; }
+@keyframes pulse { 0%,100% { opacity: .45 } 50% { opacity: 1 } }
+.preloader__pct { font-variant-numeric: tabular-nums; }
+
+/* ══════════════════════ NAV ══════════════════════ */
+.nav {
+  position: fixed; inset-inline: 0; top: 0;
+  z-index: var(--z-nav);
+  padding-block: clamp(0.9rem, 1.8vw, 1.4rem);
+  /* Always-on scrim. The hero's WebGL bloom is bright on the right-hand side
+     and the mono links / sound pill vanish into it without this. */
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--void) 56%, transparent) 0%,
+    color-mix(in oklab, var(--void) 20%, transparent) 62%,
+    transparent 100%);
+  transition: transform 520ms var(--ease-out);
+}
+.nav::after {
+  content: ''; position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(180deg, color-mix(in oklab, var(--void) 88%, transparent), transparent);
+  opacity: 0; transition: opacity 500ms var(--ease-out);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  border-bottom: 1px solid transparent;
+}
+.nav.is-stuck::after { opacity: 1; border-bottom-color: var(--line); }
+.nav.is-hidden { transform: translateY(-105%); }
+
+.nav__inner {
+  max-width: var(--maxw); margin-inline: auto; padding-inline: var(--gutter);
+  display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
+}
+.nav__brand { display: flex; align-items: center; gap: 0.7rem; color: var(--bone); }
+.nav__brand-mark { color: var(--ember); display: grid; place-items: center; transition: transform 900ms var(--ease-out); }
+.nav__brand:hover .nav__brand-mark { transform: rotate(180deg); }
+.nav__brand-name {
+  font-family: var(--font-display); font-weight: 600; font-size: var(--step--1);
+  letter-spacing: -0.01em; white-space: nowrap;
+}
+.nav__brand-name em { font-style: italic; color: var(--ember); }
+
+.nav__links { display: flex; gap: clamp(1rem, 2.2vw, 2.25rem); }
+.nav__links a {
+  position: relative; overflow: hidden;
+  font-family: var(--font-mono); font-size: var(--step--2);
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--bone-dim);
+  padding-block: 0.35rem;
+  transition: color var(--dur) var(--ease-out);
+}
+.nav__links a::after {
+  content: ''; position: absolute; left: 0; bottom: 0; width: 100%; height: 1px;
+  background: var(--ember); transform: scaleX(0); transform-origin: right;
+  transition: transform 500ms var(--ease-out);
+}
+.nav__links a:hover, .nav__links a.is-active { color: var(--bone); }
+.nav__links a:hover::after, .nav__links a.is-active::after { transform: scaleX(1); transform-origin: left; }
+.nav__links a:active { color: var(--ember); }
+
+.nav__actions { display: flex; align-items: center; gap: clamp(0.6rem, 1.4vw, 1.1rem); }
+.nav__cta { padding: 0.7em 1.25em; font-size: var(--step--2); }
+
+.nav__sound {
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.5rem 0.9rem; border: 1px solid var(--line);
+  border-radius: 999px; color: var(--bone-faint);
+  font-family: var(--font-mono); font-size: var(--step--2);
+  letter-spacing: 0.16em; text-transform: uppercase;
+  transition: color var(--dur) var(--ease-out), border-color var(--dur) var(--ease-out);
+}
+.nav__sound:hover { color: var(--bone); border-color: var(--line-strong); }
+.nav__sound:active { transform: scale(0.97); }
+.nav__sound[aria-pressed="true"] { color: var(--ember); border-color: color-mix(in oklab, var(--ember) 40%, transparent); }
+.nav__eq { display: flex; align-items: flex-end; gap: 2px; height: 11px; }
+.nav__eq i { width: 2px; height: 3px; background: currentColor; border-radius: 1px; transition: height 200ms var(--ease-out); }
+.nav__sound[aria-pressed="true"] .nav__eq i { animation: eq 900ms var(--ease-io) infinite alternate; }
+.nav__eq i:nth-child(2) { animation-delay: 140ms !important; }
+.nav__eq i:nth-child(3) { animation-delay: 300ms !important; }
+.nav__eq i:nth-child(4) { animation-delay: 90ms  !important; }
+@keyframes eq { from { height: 3px } to { height: 11px } }
+
+/* 2.75rem = 44px: the minimum comfortable touch target. */
+.nav__burger { display: none; width: 2.75rem; height: 2.75rem; place-items: center; position: relative; }
+.nav__burger i {
+  position: absolute; left: 50%; width: 1.15rem; height: 1px; background: var(--bone);
+  transition: transform 400ms var(--ease-out), opacity 200ms;
+  transform-origin: center;
+}
+.nav__burger i:nth-child(1) { transform: translate(-50%, -4px); }
+.nav__burger i:nth-child(2) { transform: translate(-50%, 4px); }
+.nav__burger[aria-expanded="true"] i:nth-child(1) { transform: translate(-50%, 0) rotate(45deg); }
+.nav__burger[aria-expanded="true"] i:nth-child(2) { transform: translate(-50%, 0) rotate(-45deg); }
+
+@media (max-width: 1000px) {
+  .nav__links { display: none; }
+  .nav__burger { display: grid; }
+}
+/* Four unlabelled dots in a pill is not an affordance. Keep the word as long
+   as the row has space for it; below this the burger and the CTA win. */
+@media (max-width: 760px) {
+  .nav__sound-label { display: none; }
+  .nav__sound { padding: 0.5rem 0.7rem; }
+}
+@media (max-width: 620px) { .nav__cta { display: none; } }
+
+/* ══════════════════════ DRAWER ══════════════════════ */
+.drawer {
+  position: fixed; inset: 0; z-index: calc(var(--z-nav) - 1);
+  background: color-mix(in oklab, var(--void) 96%, transparent);
+  display: flex; flex-direction: column;
+  padding: max(6rem, calc(var(--gutter) + 3.5rem)) var(--gutter)
+           calc(var(--gutter) + env(safe-area-inset-bottom, 0px));
+  overflow-y: auto; overscroll-behavior: contain;
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 720ms var(--ease-out), visibility 720ms;
+  /* Closed: fully out of the render tree. A permanently-live full-viewport
+     backdrop-filter forces the compositor to keep a backdrop root on every
+     frame of a WebGL page, and its interaction with clip-path is not
+     uniformly implemented across engines. */
+  visibility: hidden; pointer-events: none;
+}
+.drawer.is-open {
+  clip-path: inset(0 0 0 0);
+  visibility: visible; pointer-events: auto;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+/* Free space is split between the top of the menu and the gap above the foot,
+   so the drawer reads as a composed page rather than a list with a hole in it. */
+.drawer__links { display: grid; gap: 0.25rem; margin-top: auto; }
+.drawer__links a {
+  display: flex; align-items: baseline; gap: 1rem;
+  font-family: var(--font-display); font-size: clamp(2.5rem, 12.5vw, 4rem);
+  font-weight: 500; line-height: 1.15; color: var(--bone);
+  padding-block: 0.15em; border-bottom: 1px solid var(--line);
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out), color var(--dur);
+}
+.drawer.is-open .drawer__links a { opacity: 1; transform: none; }
+.drawer.is-open .drawer__links a:nth-child(1) { transition-delay: 120ms }
+.drawer.is-open .drawer__links a:nth-child(2) { transition-delay: 190ms }
+.drawer.is-open .drawer__links a:nth-child(3) { transition-delay: 260ms }
+.drawer.is-open .drawer__links a:nth-child(4) { transition-delay: 330ms }
+.drawer.is-open .drawer__links a:nth-child(5) { transition-delay: 400ms }
+.drawer__links a:hover { color: var(--ember); }
+.drawer__links a:hover .drawer__n { color: var(--ember); }
+.drawer__links a:active { color: var(--ember); }
+.drawer__n {
+  font-family: var(--font-mono); font-size: var(--step--2); color: var(--bone-ghost);
+  letter-spacing: 0.2em; transition: color var(--dur) var(--ease-out);
+}
+.drawer__foot {
+  margin-top: auto; padding-top: 2.5rem;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1.5rem; flex-wrap: wrap;
+}
+.drawer__foot p { font-family: var(--font-mono); font-size: var(--step--2); letter-spacing: 0.16em; text-transform: uppercase; color: var(--bone-ghost); }
+
+/* ══════════════════════ CURSOR ══════════════════════ */
+.cursor {
+  position: fixed; top: 0; left: 0; z-index: var(--z-cursor);
+  pointer-events: none; mix-blend-mode: difference;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--bone);
+  transform: translate3d(-50%, -50%, 0);
+  transition: width 320ms var(--ease-out), height 320ms var(--ease-out), background 320ms;
+  opacity: 0;
+}
+.cursor.is-live { opacity: 1; }
+.cursor.is-hover { width: 46px; height: 46px; background: var(--ember); }
+.cursor__label {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--void); opacity: 0;
+  transition: opacity 250ms;
+  white-space: nowrap;
+}
+.cursor.is-hover .cursor__label { opacity: 1; }
+@media (hover: none), (pointer: coarse) { .cursor { display: none; } }
+
+/* Scroll progress hairline, pinned to the bottom edge of the header.
+   scaleX, not width — this is written on every scroll frame. */
+.nav__progress {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+  background: transparent; overflow: hidden;
+}
+.nav__progress i {
+  display: block; height: 100%; width: 100%;
+  transform: scaleX(0);
+  transform-origin: left center;
+  background: linear-gradient(90deg, var(--ember), var(--tide));
+}
+
+/* ══════════════════════ REDUCED MOTION ══════════════════════
+   tokens.css collapses --dur*, but every literal duration in this file has to
+   be answered explicitly. Nothing here may stay hidden: the drawer still
+   opens, the preloader still lifts, the progress hairline still tracks. */
+@media (prefers-reduced-motion: reduce) {
+  .preloader { transition: opacity 1ms linear, visibility 1ms; }
+  .preloader__inner { transition: opacity 1ms linear; transform: none !important; }
+  .preloader__glyph { animation: none; }
+  .preloader__label { animation: none; opacity: 0.75; }
+
+  .nav { transition: none; }
+  .nav::after { transition: none; }
+  .nav__brand-mark { transition: none; }
+  .nav__brand:hover .nav__brand-mark { transform: none; }
+  .nav__links a::after { transition: none; }
+  .nav__sound:active { transform: none; }
+  .nav__eq i { transition: none; }
+  .nav__sound[aria-pressed="true"] .nav__eq i { animation: none; height: 7px; }
+  .nav__eq i:nth-child(2) { height: 11px; }
+  .nav__eq i:nth-child(4) { height: 5px; }
+  .nav__burger i { transition: none; }
+
+  .drawer { transition: none; clip-path: inset(0 0 100% 0); }
+  .drawer.is-open { clip-path: inset(0 0 0 0); }
+  .drawer__links a { opacity: 1; transform: none; transition: none; transition-delay: 0ms !important; }
+
+  .cursor { transition: background 1ms linear; }
+  .cursor__label { transition: none; }
+}

@@ -1,0 +1,1013 @@
+/* ============================================================
+   sections.css — the editorial layout for every band of the page.
+   ============================================================ */
+
+/* ---------- WebGL stage sits behind everything ---------- */
+.stage {
+  position: fixed; inset: 0;
+  z-index: var(--z-canvas);
+  pointer-events: none;
+}
+.stage canvas { width: 100%; height: 100%; display: block; }
+
+main, .footer { position: relative; z-index: var(--z-content); }
+
+/* ---------- Shared section heads ----------
+   ONE system, used by every band on the page: kicker → heading → lede.
+   .sec-head is the canonical wrapper; .purpose__head, .about__copy and .cta
+   are the same rhythm expressed inside their own grids, so they opt in below
+   rather than inventing their own numbers. */
+.sec-head { margin-bottom: var(--head-bottom); }
+
+.sec-head .kicker,
+.purpose__head .kicker,
+.about__copy .kicker,
+.cta .kicker { margin-bottom: var(--head-gap); }
+
+/* The optical-lead padding is what actually makes the gap look like the gap:
+   display--tight sets line-height 0.86, so the glyph box overhangs the line
+   box by ~0.17em and eats the kicker margin. */
+.sec-head h2,
+.purpose__title,
+.about__title,
+.cta__title { margin-top: 0; padding-top: var(--optical-lead); }
+
+.sec-head h2 { font-size: var(--step-7); }
+.sec-head h2 em { font-style: italic; color: var(--ember); }
+
+.sec-head--split {
+  display: flex;
+  align-items: flex-end;         /* fallback for engines without last-baseline */
+  align-items: last baseline;    /* the two blocks are set to share a baseline,
+                                    so share the BASELINE, not the box edge —
+                                    flex-end left them 14px out of register. */
+  justify-content: space-between;
+  gap: clamp(2rem, 5vw, 6rem); flex-wrap: wrap;
+}
+.sec-head--split .lede { flex: 1 1 22rem; max-width: 34ch; }
+
+/* ══════════════════════ HERO ══════════════════════ */
+.hero {
+  min-height: 100svh;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding-block: calc(var(--gutter) * 3) clamp(1.5rem, 3vw, 2.75rem);
+  position: relative;
+  isolation: isolate;
+}
+.hero__grid { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: clamp(1.25rem, 2.4vw, 2rem); }
+
+/* The three roles are one line of type, not three flex items. Laying them out
+   with the separators as siblings let the row wrap AFTER a separator, so at
+   390px line one ended on a dangling "·". Binding each separator to the word
+   before it with a pseudo-element makes that break impossible, and the tighter
+   tracking below 520px keeps the whole credit on one line at 390. */
+.hero__eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--bone-faint);
+  line-height: 1.7;
+}
+.hero__eyebrow span { white-space: nowrap; }
+/* The left margin is smaller than the right on purpose: the preceding word
+   already carries a trailing letter-space, so equal margins would sit the
+   dot visibly closer to the word after it. */
+.hero__eyebrow span:not(:last-child):not(.hero__eq)::after {
+  content: '·';
+  color: var(--ember);
+  margin-inline: 0.42em 0.62em;
+  letter-spacing: 0;
+}
+@media (max-width: 520px) {
+  .hero__eyebrow { letter-spacing: 0.17em; }
+  .hero__eyebrow span:not(:last-child):not(.hero__eq)::after { margin-inline: 0.5em 0.62em; }
+}
+
+.hero__title {
+  /* The floor was 3.9rem: at 390px that rendered the H1 at 62px — barely
+     larger than a 57px section head, and filling under half the column while
+     the lede filled all of it. The hierarchy inverted on phones. 5rem takes
+     over below 516px; above that the vw term is unchanged. */
+  font-size: clamp(5rem, 15.5vw, 15.5rem);
+  --opsz: var(--opsz-poster);
+  --soft: 24;
+  --track: -0.045em;
+  font-weight: 500;
+  line-height: 0.82;
+  color: var(--bone);
+  margin-block: 0.08em 0.1em;
+}
+.hero__title .line-mask { padding-bottom: 0.06em; }
+.hero__title-em {
+  font-style: italic;
+  /* ember → tide across the word; the blue has to arrive before the final glyph,
+     otherwise it only tints the overshoot of the italic 'd' and reads as pink. */
+  background: linear-gradient(100deg,
+    var(--ember-300) 0%,
+    var(--ember) 26%,
+    var(--ember-300) 46%,
+    var(--tide-300) 68%,
+    var(--tide) 92%);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+  padding-right: 0.06em;
+}
+
+.hero__lede {
+  font-size: var(--step-1);
+  color: var(--bone-dim);
+  max-width: 42ch;
+  line-height: 1.5;
+}
+
+.hero__actions { display: flex; align-items: center; gap: clamp(1rem, 2.5vw, 2.25rem); flex-wrap: wrap; margin-top: 0.75rem; }
+
+.hero__play {
+  display: inline-flex; align-items: center; gap: 0.95rem;
+  color: var(--bone-dim);
+  transition: color var(--dur) var(--ease-out);
+}
+.hero__play:hover { color: var(--bone); }
+.hero__play-ring {
+  position: relative; flex: none;
+  width: 3.1rem; height: 3.1rem; border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  display: grid; place-items: center;
+  transition: border-color var(--dur) var(--ease-out), transform var(--dur) var(--ease-out);
+}
+.hero__play-ring::after {
+  content: ''; position: absolute; inset: -1px; border-radius: 50%;
+  border: 1px solid var(--ember); opacity: 0; transform: scale(0.86);
+  transition: opacity 700ms var(--ease-out), transform 700ms var(--ease-out);
+}
+.hero__play:hover .hero__play-ring { border-color: transparent; transform: scale(1.04); }
+.hero__play:hover .hero__play-ring::after { opacity: 1; transform: scale(1); }
+.hero__play-icon {
+  display: block;
+  width: 0; height: 0; margin-left: 3px;
+  border-left: 9px solid currentColor;
+  border-top: 6px solid transparent; border-bottom: 6px solid transparent;
+  transition: color var(--dur) var(--ease-out);
+}
+.hero__play:hover .hero__play-icon { color: var(--ember); }
+.hero__play-text { display: flex; flex-direction: column; text-align: left; font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.08em; }
+.hero__play-text em { font-style: normal; font-size: var(--step--2); color: var(--bone-ghost); letter-spacing: 0.16em; margin-top: 2px; }
+
+.hero__foot {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 2rem; padding-top: clamp(2rem, 5vh, 4rem);
+}
+.hero__scroll {
+  display: inline-flex; align-items: center; gap: 0.75rem;
+  font-family: var(--font-mono); font-size: var(--step--2);
+  letter-spacing: 0.24em; text-transform: uppercase; color: var(--bone-faint);
+  transition: color var(--dur) var(--ease-out);
+}
+.hero__scroll:hover { color: var(--ember); }
+.hero__scroll-rail { position: relative; display: block; width: 1px; height: 3.25rem; background: var(--line-strong); overflow: hidden; }
+.hero__scroll-rail i { position: absolute; inset-inline: 0; height: 40%; background: var(--ember); animation: railDrop 2.4s var(--ease-io) infinite; }
+@keyframes railDrop { 0% { transform: translateY(-120%); } 60%,100% { transform: translateY(260%); } }
+
+.hero__loc {
+  display: flex; gap: 0.75em; flex-wrap: wrap;
+  font-family: var(--font-mono); font-size: var(--step--2);
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--bone-ghost);
+}
+
+@media (max-width: 680px) {
+  .hero__foot { flex-direction: column; align-items: flex-start; gap: 1.5rem; }
+}
+
+/* The literal "this is music" signal: five bars pulsing beside the credit. */
+.hero__eq {
+  display: inline-flex; align-items: flex-end; gap: 3px;
+  height: 15px; margin-right: 0.9em; flex: none;
+  transform: translateY(1px);
+}
+.hero__eq i {
+  width: 3px; border-radius: 1.5px;
+  background: linear-gradient(180deg, var(--ember), var(--ember-800));
+  height: 4px;
+  animation: heroEq 860ms var(--ease-io) infinite alternate;
+}
+.hero__eq i:nth-child(1) { animation-delay: 0ms;   }
+.hero__eq i:nth-child(2) { animation-delay: 190ms; }
+.hero__eq i:nth-child(3) { animation-delay: 90ms;  }
+.hero__eq i:nth-child(4) { animation-delay: 300ms; }
+.hero__eq i:nth-child(5) { animation-delay: 140ms; }
+@keyframes heroEq { from { height: 4px; } to { height: 15px; } }
+@media (prefers-reduced-motion: reduce) {
+  .hero__eq i { animation: none; }
+  .hero__eq i:nth-child(1) { height: 7px }
+  .hero__eq i:nth-child(2) { height: 13px }
+  .hero__eq i:nth-child(3) { height: 9px }
+  .hero__eq i:nth-child(4) { height: 15px }
+  .hero__eq i:nth-child(5) { height: 6px }
+}
+
+/* ══════════════════════ MARQUEE ══════════════════════ */
+.marquee {
+  border-block: 1px solid var(--line);
+  padding-block: 1.15rem;
+  overflow: hidden;
+  background: color-mix(in oklab, var(--moss) 45%, transparent);
+  backdrop-filter: blur(6px);
+}
+/* The track is the seven services listed TWICE and shifted by -50%.
+   With flex `gap` that is off by exactly half a gap every cycle — 14 items and
+   13 internal gaps per half, but 27 gaps across the pair — so the loop jumped
+   20px each time it wrapped. Carrying the space as a trailing margin on every
+   item makes each half self-contained and -50% land on the seam. */
+.marquee__track {
+  display: flex; align-items: center;
+  width: max-content;
+  animation: marquee 42s linear infinite;
+  font-family: var(--font-mono); font-size: var(--step--1);
+  letter-spacing: 0.28em; text-transform: uppercase; color: var(--bone-faint);
+}
+.marquee__track > * { margin-right: 2.5rem; flex: none; }
+.marquee__track i { color: var(--ember); font-size: 0.6em; font-style: normal; letter-spacing: 0; }
+.marquee:hover .marquee__track { animation-play-state: paused; }
+@keyframes marquee { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) {
+  .marquee__track { animation: none; }
+  .hero__scroll-rail i { animation: none; height: 100%; opacity: 0.5; }
+}
+
+/* ══════════════════════ CHAOS / CONTROL ══════════════════════ */
+.chaos { padding-block: var(--bay); }
+.chaos__title { font-size: clamp(3.2rem, 11vw, 10rem); display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.06em; }
+.chaos__word--a { color: var(--bone); }
+.chaos__word--b { font-style: italic; color: var(--tide); }
+.chaos__slash { color: var(--ember); font-weight: 300; padding-inline: 0.06em; }
+
+.chaos__body { align-items: start; margin-bottom: clamp(3rem, 7vw, 6rem); }
+.chaos__lede { grid-column: 1 / span 6; }
+.chaos__lede .lede { margin-bottom: 1.15em; max-width: 40ch; }
+@media (max-width: 860px) { .chaos__lede { grid-column: 1 / -1; } }
+
+/* The stamp shares the right-hand track with .chaos__closer further down the
+   section (8 / -1). It used to stop at column 11 while the closer ran to 12,
+   so at 1920 its right edge sat 195px short of every other block on the page. */
+.chaos__stamp {
+  grid-column: 8 / -1;
+  justify-self: center; align-self: center;
+  display: grid; place-items: center;
+  padding: clamp(1.1rem, 2.2vw, 1.8rem) clamp(1.4rem, 3vw, 2.6rem) clamp(1.1rem, 2.2vw, 1.8rem);
+  border: 2px solid color-mix(in oklab, var(--ember) 55%, transparent);
+  border-radius: var(--radius-md);
+  /* The independent `rotate` property, NOT transform: the reveal system sets
+     `transform: none` on .is-in, which was silently flattening the stamp —
+     the "rubber stamp" has never actually been stamped at any width. */
+  rotate: -8deg;
+  background: color-mix(in oklab, var(--ember) 5%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ember) 18%, transparent);
+  position: relative;
+  gap: 0.55rem;
+}
+/* the double rule of a rubber stamp — inset by the same 5px on every side,
+   so its radius has to be the outer radius minus that inset, not a stray 3px */
+.chaos__stamp::before {
+  content: ''; position: absolute; inset: 5px;
+  border: 1px solid color-mix(in oklab, var(--ember) 30%, transparent);
+  border-radius: calc(var(--radius-md) - 3px);
+  pointer-events: none;
+}
+/* "VERDICT" sat astride the border on an opaque --void chip — but nothing
+   behind it is flat --void (WebGL, grain, vignette), so it read as a black
+   box glued to the frame. Inside the rules it needs no fake background. */
+.chaos__stamp-label {
+  font-family: var(--font-mono); font-size: var(--step--2);
+  letter-spacing: 0.3em; text-transform: uppercase;
+  color: color-mix(in oklab, var(--ember) 70%, transparent);
+  padding-left: 0.3em;   /* optical: cancels the trailing letter-space */
+}
+.chaos__stamp-word {
+  font-family: var(--font-display); font-style: italic; font-weight: 700;
+  font-variation-settings: 'opsz' var(--opsz-display), 'SOFT' 60, 'WONK' 1;
+  font-size: clamp(1.7rem, 3.8vw, 2.9rem);
+  line-height: 1;
+  color: var(--ember); letter-spacing: -0.018em; text-align: center;
+  text-transform: uppercase;
+}
+@media (max-width: 860px) {
+  /* Stacked it becomes a block in the left column, so it keeps its own
+     rectangle — the old pill outer + rounded-rect inner were two shapes. */
+  .chaos__stamp { grid-column: 1 / -1; justify-self: start; margin-top: 2.5rem; }
+}
+
+.chaos__fork-intro {
+  font-family: var(--font-mono); font-size: var(--step--1);
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--bone-faint);
+  text-align: center; margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.fork {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: stretch; gap: clamp(1rem, 2.5vw, 2rem);
+}
+@media (max-width: 900px) { .fork { grid-template-columns: 1fr; } }
+
+/* Side by side the "or" is a hinge between two columns. Stacked it used to be
+   a lone italic word flush left in its own full-width row, reading as a typo.
+   Below 900px it becomes a centred divider with the rule running through it,
+   which is what the word was doing structurally all along. */
+.fork__or {
+  align-self: center;
+  font-family: var(--font-display); font-style: italic;
+  font-variation-settings: 'opsz' var(--opsz-title), var(--wonk-on);
+  font-size: var(--step-2); color: var(--bone-ghost);
+  padding-inline: 0.5rem;
+}
+@media (max-width: 900px) {
+  .fork__or {
+    display: flex; align-items: center; gap: 1rem;
+    justify-self: stretch; padding-inline: 0;
+    margin-block: 0.25rem;
+    font-size: var(--step-1);
+  }
+  .fork__or::before, .fork__or::after {
+    content: ''; flex: 1; height: 1px; background: var(--line);
+  }
+}
+.fork__card {
+  position: relative;
+  padding: clamp(1.6rem, 3vw, 2.6rem);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, color-mix(in oklab, var(--bone) 4%, transparent), transparent 65%);
+  overflow: hidden;
+  transition: border-color var(--dur) var(--ease-out), transform var(--dur) var(--ease-out);
+}
+.fork__card::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(90% 70% at 50% -10%, var(--fork-glow, transparent), transparent 70%);
+  opacity: 0.5; pointer-events: none;
+}
+.fork__card--good { --fork-glow: color-mix(in oklab, var(--tide) 26%, transparent); }
+.fork__card--bad  { --fork-glow: color-mix(in oklab, var(--ember-800) 34%, transparent); }
+.fork__card:hover { transform: translateY(-4px); border-color: var(--line-strong); }
+
+.fork__tag {
+  font-family: var(--font-mono); font-size: var(--step--2);
+  letter-spacing: 0.24em; text-transform: uppercase; color: var(--bone-ghost);
+}
+.fork__title {
+  font-size: var(--step-4);        /* 33–48px → display tier, not poster */
+  --opsz: var(--opsz-display); --track: -0.018em;
+  margin-block: 0.6rem 0.9rem; line-height: 1.05; color: var(--bone);
+}
+.fork__title em { font-style: italic; display: block; }
+.fork__card--good .fork__title em { color: var(--tide); }
+.fork__card--bad  .fork__title em { color: var(--ember-600); }
+.fork__card p { color: var(--bone-faint); max-width: 38ch; font-size: var(--step--1); }
+
+.fork__meter {
+  display: flex; align-items: flex-end; gap: 4px;
+  height: 44px; margin-top: 1.75rem;
+  /* a level meter, not a bar chart — narrow columns reading left to right.
+     The bars are a fixed 6px each, so the box only ever needs to be as wide
+     as they are; the old `width: min(11rem, 55%)` reserved up to 176px of
+     empty box and made the card's left column look arbitrarily padded. */
+  width: max-content;
+}
+.fork__meter i {
+  width: 6px; flex: none; border-radius: 1px; transform-origin: bottom;
+  height: calc(var(--v) * 100%);
+  background: linear-gradient(180deg, var(--tide-300), color-mix(in oklab, var(--tide) 14%, transparent));
+  animation: meterBreathe 3.2s var(--ease-io) infinite alternate;
+  animation-delay: calc(var(--v) * -1.6s);
+}
+.fork__meter--noise i {
+  background: linear-gradient(180deg, var(--ember), color-mix(in oklab, var(--ember-800) 26%, transparent));
+  animation-duration: 0.28s; animation-timing-function: steps(2);
+}
+@keyframes meterBreathe { from { transform: scaleY(0.45); } to { transform: scaleY(1); } }
+@media (prefers-reduced-motion: reduce) { .fork__meter i { animation: none; } }
+
+.chaos__resolve { margin-top: clamp(3.5rem, 8vw, 7rem); align-items: start; }
+.chaos__resolve-copy { grid-column: 1 / span 6; }
+.chaos__closer { grid-column: 8 / span 5; border-left: 1px solid var(--line-strong); padding-left: clamp(1.25rem, 2.5vw, 2.25rem); }
+@media (max-width: 860px) {
+  .chaos__resolve-copy, .chaos__closer { grid-column: 1 / -1; }
+  .chaos__closer { margin-top: 2.5rem; }
+}
+.chaos__closer-pre { font-family: var(--font-mono); font-size: var(--step--2); letter-spacing: 0.14em; text-transform: uppercase; color: var(--bone-ghost); margin-bottom: 1.25rem; }
+.chaos__closer-line {
+  font-size: var(--step-3);        /* 28–38px → title tier */
+  --opsz: var(--opsz-title); --track: -0.008em;
+  line-height: 1.12; color: var(--bone); font-style: italic;
+  text-wrap: balance;   /* two short display lines — even them up rather than
+                           letting one word fall to a line of its own */
+}
+/* The stepped second line is the point of the pair — but at 390px a 1.5em
+   indent pushed it 7px past the right gutter. Below 720px it steps by a
+   third of that, which still reads as a step and stays inside the column. */
+.chaos__closer-line--2 { color: var(--ember); margin-top: 0.35em; padding-left: 1.5em; }
+@media (max-width: 720px) { .chaos__closer-line--2 { padding-left: 0.5em; } }
+
+/* ══════════════════════ PURPOSE ══════════════════════ */
+.purpose { padding-block: var(--bay); position: relative; overflow: hidden; }
+.purpose .shell { position: relative; z-index: 1; }
+/* IMG_2890 — the hand-drawn sun/clouds/wave piece — treated the way the hero
+   treats the diffuser wall: a right-edge band, graded down and screen-blended
+   so it emerges faintly from the void. Inside `main` there is no GL canvas in
+   the backdrop, so screen effectively paints onto near-black: brightness sets
+   the ceiling of what survives. Anchored to the section's bottom-right so the
+   copy block (top right) and the principles grid (opaque cells) stay clean;
+   the wave / red-sun half of the drawing is the crop that reads. */
+.purpose__art {
+  position: absolute;
+  right: 0; bottom: 0;
+  width: min(48%, 42rem);
+  height: min(70%, 38rem);
+  object-fit: cover;
+  /* 96% sinks the window to the drawing's bottom third: the Hokusai wave,
+     Fuji and the red sun carry the band; the flaming sun stays for the hero
+     of the drawing itself. */
+  object-position: 50% 96%;
+  mix-blend-mode: screen;
+  /* Graded like the diffuser but with the saturation kept: the paper darkens
+     to a whisper while the red/blue inks stay readable as colour. */
+  filter: brightness(0.42) contrast(1.55) saturate(0.95) sepia(0.2);
+  opacity: 0.6;
+  pointer-events: none;
+  /* Tighter bottom ramp than the hero's: the band is anchored to the section
+     edge, so it only needs enough fade to avoid a hard cut, not a third of
+     its height — that ramp was drowning the wave. */
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 55%),
+                      linear-gradient(0deg, transparent 1%, #000 16%, #000 80%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(90deg, transparent 0%, #000 55%),
+              linear-gradient(0deg, transparent 1%, #000 16%, #000 80%, transparent 100%);
+  mask-composite: intersect;
+}
+/* Stacked layouts run the closer's text straight through this corner; a band
+   fighting body copy on a phone is not worth the texture. */
+@media (max-width: 780px) { .purpose__art { display: none; } }
+.purpose__top { align-items: start; margin-bottom: clamp(3rem, 7vw, 6rem); }
+.purpose__head { grid-column: 1 / span 5; }
+.purpose__title { font-size: var(--step-7); }
+.purpose__title em { font-style: italic; color: var(--tide); }
+.purpose__copy { grid-column: 7 / span 6; }
+@media (max-width: 860px) { .purpose__head, .purpose__copy { grid-column: 1 / -1; } .purpose__copy { margin-top: 2rem; } }
+
+/* Same device as .chaos__closer — a rule set against a block of copy — so it
+   uses the same indent scale rather than an unrelated 0.7em. */
+.purpose__pull {
+  font-family: var(--font-display); font-style: italic; font-weight: 600;
+  font-variation-settings: 'opsz' var(--opsz-title), var(--wonk-on);
+  font-size: var(--step-3); line-height: 1.15; color: var(--bone);
+  letter-spacing: -0.008em;
+  margin-block: 1.1em 0.9em !important; max-width: 22ch;
+  border-left: 2px solid var(--tide);
+  padding-left: clamp(1rem, 2vw, 1.5rem);
+  text-wrap: balance;
+}
+
+.principles {
+  list-style: none; padding: 0;
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 1px; background: var(--line);
+  border-block: 1px solid var(--line);
+}
+@media (max-width: 940px) { .principles { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 520px) { .principles { grid-template-columns: 1fr; } }
+.principle {
+  background: var(--void);
+  padding: clamp(1.5rem, 2.6vw, 2.25rem) clamp(1.25rem, 2vw, 1.75rem) clamp(2rem, 3vw, 2.75rem);
+  position: relative;
+  transition: background var(--dur) var(--ease-out);
+}
+.principle::after {
+  content: ''; position: absolute; inset-inline: 0; bottom: 0; height: 2px;
+  background: linear-gradient(90deg, var(--ember), var(--tide));
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 700ms var(--ease-out);
+}
+.principle:hover { background: color-mix(in oklab, var(--moss) 55%, transparent); }
+.principle:hover::after { transform: scaleX(1); }
+.principle__n { font-family: var(--font-mono); font-size: var(--step--2); color: var(--ember); letter-spacing: 0.2em; }
+.principle__t { font-size: var(--step-1); margin-block: 0.85rem 0.5rem; color: var(--bone); font-variation-settings: 'opsz' 40, var(--wonk-off); }
+.principle__d { font-size: var(--step--1); color: var(--bone-faint); line-height: 1.55; }
+
+.purpose__closer {
+  margin-top: clamp(3rem, 7vw, 5.5rem);
+  font-size: var(--step-4);        /* 33–48px → display tier */
+  --opsz: var(--opsz-display); --track: -0.018em;
+  line-height: 1.2; max-width: 24ch; color: var(--bone-dim);
+}
+.purpose__closer em { font-style: italic; color: var(--bone); }
+
+/* ══════════════════════ WORK ══════════════════════ */
+.work { padding-block: var(--bay); }
+/* The vinyl's specular arc sweeps under this headline (its key light orbits);
+   a soft local ground keeps the type at a stable contrast without dimming the
+   disc itself. */
+.work .sec-head { position: relative; isolation: isolate; }
+.work .sec-head::before {
+  content: ''; position: absolute; z-index: -1;
+  /* The right overhang is capped at the gutter: at -6% flat it poked 44px
+     past the viewport at 1440 and put 28px of phantom width on the page. */
+  inset: -14% max(-6%, calc(2px - var(--gutter))) -18% -8%;
+  background: radial-gradient(closest-side, color-mix(in oklab, var(--void) 78%, transparent), transparent 78%);
+  filter: blur(14px);
+  pointer-events: none;
+}
+.work__title em { font-style: italic; color: var(--ember); }
+.work__noscript { color: var(--bone-faint); padding: 2rem; border: 1px solid var(--line); border-radius: var(--radius-lg); }
+
+/* ══════════════════════ SERVICES ══════════════════════ */
+.services { padding-block: var(--bay); }
+.svc-list { border-top: 1px solid var(--line); }
+.svc {
+  display: grid;
+  /* Four columns of type only work when there is room for all four. The old
+     ratios starved the deliverables column (207px at 1024, against the 214 that
+     "Tracking & performance coaching" needs) so every other row broke to two
+     ragged mono lines. Widened here, and the row now collapses at 1240 rather
+     than 1000: four columns of type need about 1240px before both the body
+     (was 35 characters a line at 1024) and the deliverables column have room.
+     Below that the two-column form is simply the better read. */
+  grid-template-columns: 5rem minmax(0, 1fr) minmax(0, 1.4fr) minmax(0, 0.95fr);
+  gap: clamp(1rem, 2.5vw, 2.5rem);
+  align-items: start;
+  padding-block: clamp(2rem, 4vw, 3.25rem);
+  border-bottom: 1px solid var(--line);
+  position: relative;
+  transition: color var(--dur) var(--ease-out);
+}
+.svc::before {
+  content: ''; position: absolute; inset: 0 calc(var(--gutter) * -0.5);
+  background: linear-gradient(90deg, color-mix(in oklab, var(--ember) 8%, transparent), transparent 55%);
+  opacity: 0; transition: opacity var(--dur) var(--ease-out); pointer-events: none;
+}
+.svc:hover::before { opacity: 1; }
+.svc__n { font-family: var(--font-mono); font-size: var(--step--2); color: var(--bone-ghost); letter-spacing: 0.2em; padding-top: 0.6em; }
+.svc:hover .svc__n { color: var(--ember); }
+.svc__name {
+  font-size: var(--step-5);        /* 40–60px → display tier */
+  --opsz: var(--opsz-display); --track: -0.018em;
+  line-height: 1; color: var(--bone);
+}
+.svc__tag { display: block; margin-top: 0.6rem; font-family: var(--font-mono); font-size: var(--step--2); letter-spacing: 0.18em; text-transform: uppercase; color: var(--ember); }
+/* Had NO measure. Between 520 and 1000px the row collapses to two columns and
+   this ran the full remaining width — 90 characters a line at 1000px, the
+   worst measure on the page. */
+.svc__body { color: var(--bone-faint); font-size: var(--step--1); line-height: 1.65; max-width: 62ch; }
+.svc__list { list-style: none; padding: 0; display: grid; gap: 0.55rem; }
+.svc__list li {
+  font-family: var(--font-mono); font-size: var(--step--2);
+  color: var(--bone-dim); letter-spacing: 0.04em;
+  padding-left: 1.15em; position: relative;
+}
+/* A drawn rule, not a '—' glyph: the site's copy is dash-free, and a marker
+   drawn as a box aligns to the same optical middle in every font. */
+.svc__list li::before {
+  content: ''; position: absolute; left: 0; top: 0.62em;
+  width: 0.72em; height: 1px; background: var(--tide);
+}
+@media (max-width: 1240px) {
+  .svc { grid-template-columns: 3.5rem 1fr; }
+  .svc__body, .svc__list { grid-column: 2; }
+}
+@media (max-width: 520px) { .svc { grid-template-columns: 1fr; } .svc__body, .svc__list { grid-column: 1; } }
+
+/* ══════════════════════ TESTIMONIALS ══════════════════════ */
+.proof { padding-block: var(--bay); }
+.proof .sec-head h2 em { color: var(--tide); }
+.proof__rail {
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: clamp(1rem, 2.5vw, 2rem);
+}
+@media (max-width: 820px) { .proof__rail { grid-template-columns: 1fr; } }
+
+.quote {
+  margin: 0; padding: clamp(1.75rem, 3.2vw, 3rem);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(160deg, color-mix(in oklab, var(--bone) 5%, transparent), transparent 60%);
+  display: flex; flex-direction: column; justify-content: space-between;
+  gap: clamp(1.75rem, 3vw, 2.75rem);
+  position: relative; overflow: hidden;
+  transition: border-color var(--dur) var(--ease-out), transform var(--dur) var(--ease-out);
+}
+/* REMOVED: a `“` at 14rem / bone 5%, top: -0.3em.
+   Two things were wrong with it and they compounded. Fraunces sets the mark
+   in the top 25% of the em box — at 14rem the ink is only 51px tall, not the
+   224px the font-size implies — and `top: -0.3em` then clipped most of that
+   against the card's overflow. What actually rendered was a pair of ~10px
+   tails at 5% opacity over a card that already carries a 5% gradient: not a
+   quotation mark, an ambiguous smudge nobody could name. Rebuilt at a size
+   that reads, it would be a stock-testimonial cliché fighting the type for
+   the corner. The cards are already unmistakably quotations. */
+.quote:hover { transform: translateY(-4px); border-color: color-mix(in oklab, var(--tide) 35%, transparent); }
+/* Cards in a row share a height. The one-line testimonial left a 114px void
+   under its text where its neighbours have 38px — the same component reading
+   three different ways. Letting the text box take the slack and centring in it
+   splits the difference, so short quotes look placed rather than abandoned. */
+.quote__text {
+  font-size: var(--step-2);        /* 23–30px → title tier, NOT poster */
+  --opsz: var(--opsz-title); --track: -0.008em;
+  line-height: 1.28; color: var(--bone); font-style: italic; text-wrap: pretty;
+  flex: 1 1 auto; display: flex; align-items: center;
+}
+.quote__by { display: flex; align-items: center; gap: 1rem; }
+.quote__pic { width: 3.25rem; height: 3.25rem; border-radius: 50%; object-fit: cover; filter: grayscale(0.4) contrast(1.05); flex: none; }
+.quote__pic--initials {
+  display: grid; place-items: center;
+  font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.05em;
+  color: var(--tide); background: color-mix(in oklab, var(--tide) 12%, transparent);
+  border: 1px solid color-mix(in oklab, var(--tide) 30%, transparent);
+}
+.quote__by span { display: flex; flex-direction: column; }
+.quote__by b { font-family: var(--font-body); font-weight: 500; font-size: var(--step--1); color: var(--bone); letter-spacing: 0.02em; }
+.quote__by i { font-style: normal; font-family: var(--font-mono); font-size: var(--step--2); color: var(--bone-ghost); letter-spacing: 0.16em; text-transform: uppercase; margin-top: 2px; }
+
+/* ══════════════════════ ABOUT ══════════════════════ */
+.about { padding-block: var(--bay); }
+.about__grid {
+  display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: clamp(2rem, 5vw, 5rem); align-items: start;
+}
+@media (max-width: 900px) {
+  .about__grid { grid-template-columns: 1fr; }
+  /* Stacked, a full-bleed 3:4 portrait swallows the whole viewport — go letterbox. */
+  .about__portrait { max-width: 26rem; }
+  .about__portrait img { aspect-ratio: 4 / 5; max-height: 58vh; }
+}
+
+.about__portrait { margin: 0; position: relative; }
+.about__portrait img {
+  width: 100%; aspect-ratio: 3 / 4; object-fit: cover;
+  object-position: 50% 32%;      /* keep the eyeline in the upper third */
+  max-height: 76vh;
+  border-radius: var(--radius-lg);
+  filter: contrast(1.06) saturate(0.82) sepia(0.12);
+}
+.about__portrait::after {
+  content: ''; position: absolute; inset: 0; border-radius: var(--radius-lg);
+  background: linear-gradient(200deg, color-mix(in oklab, var(--ember) 14%, transparent), transparent 45%, color-mix(in oklab, var(--tide) 16%, transparent));
+  mix-blend-mode: soft-light; pointer-events: none;
+}
+.about__portrait figcaption {
+  margin-top: 0.9rem; font-family: var(--font-mono); font-size: var(--step--2);
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--bone-ghost);
+}
+
+.about__title { font-size: var(--step-6); margin-bottom: 1.75rem; }
+.about__title em { font-style: italic; color: var(--ember); }
+
+.about__facts {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px; background: var(--line); border: 1px solid var(--line);
+  margin-top: clamp(2rem, 4vw, 3rem); border-radius: var(--radius-lg); overflow: hidden;
+}
+.about__facts > div { background: var(--void); padding: 1.15rem 1.35rem; }
+.about__facts dt { font-family: var(--font-mono); font-size: var(--step--2); letter-spacing: 0.18em; text-transform: uppercase; color: var(--bone-ghost); }
+.about__facts dd { margin: 0.4rem 0 0; font-size: var(--step--1); color: var(--bone); }
+
+.creed {
+  margin-block: clamp(4rem, 9vw, 8rem);
+  text-align: center; position: relative;
+}
+.creed__text {
+  font-size: var(--step-6); line-height: 1.1; color: var(--bone);
+  --opsz: var(--opsz-poster); --soft: 40;
+  text-wrap: balance;
+}
+.creed__text em {
+  font-style: italic;
+  background: linear-gradient(96deg, var(--ember), var(--tide));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.creed cite {
+  display: block; margin-top: 1.75rem;
+  font-family: var(--font-mono); font-style: normal; font-size: var(--step--2);
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--bone-ghost);
+}
+
+.about__gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(0.5rem, 1.2vw, 1rem); }
+@media (max-width: 760px) { .about__gallery { grid-template-columns: repeat(2, 1fr); } }
+/* One grade for the whole contact sheet. The video cell used to run
+   grayscale(0.5)/sepia(0.12) against the stills' 0.55/0.14 — four cells in one
+   row, two different recipes, and the difference was visible. */
+.about__gallery { --sheet-grade: grayscale(0.55) contrast(1.08) sepia(0.14); }
+.about__gallery figure { margin: 0; overflow: hidden; border-radius: var(--radius-lg); }
+.about__gallery img {
+  width: 100%; aspect-ratio: 4 / 3; object-fit: cover;
+  filter: var(--sheet-grade);
+  transition: filter 700ms var(--ease-out), transform 900ms var(--ease-out);
+}
+.about__gallery figure:hover img { filter: none; transform: scale(1.045); }
+
+/* ══════════════════════ CTA ══════════════════════ */
+.cta { padding-block: var(--bay); text-align: center; }
+.cta .kicker { justify-content: center; }
+.cta .kicker::after {
+  content: ''; width: clamp(1.75rem, 4vw, 3.5rem); height: 1px;
+  background: linear-gradient(90deg, var(--ember), transparent);
+}
+.cta__title { font-size: var(--step-7); margin-block: 0 clamp(2.5rem, 5vw, 4rem); }
+.cta__title em { font-style: italic; color: var(--ember); }
+/* At 390 "working together?" needs 385px in a 349px column, so step-7 broke
+   the line as "Interested in / working / together?" and stranded one word.
+   One step down clears it at 321px and keeps the two-line setting. */
+@media (max-width: 560px) { .cta__title { font-size: var(--step-6); } }
+
+.cta__ladder { display: grid; gap: 0.65rem; max-width: 54ch; margin-inline: auto; }
+.cta__ladder p { color: var(--bone-faint); font-size: var(--step-0); }
+.cta__ladder .cta__punch {
+  font-family: var(--font-display); font-style: italic;
+  font-variation-settings: 'opsz' var(--opsz-title), var(--wonk-on);
+  font-size: var(--step-3); line-height: 1.2; letter-spacing: -0.008em;
+  color: var(--bone); margin-top: 1.25rem;
+  text-wrap: balance;   /* was leaving "yourself." alone on line three at 390 */
+}
+.cta__punch em { color: var(--tide); }
+.cta__act { margin-top: clamp(2.5rem, 5vw, 4rem); display: flex; flex-direction: column; align-items: center; gap: 1.5rem; }
+.btn--xl { padding: 1.2em 2.4em; font-size: var(--step-0); letter-spacing: 0.1em; }
+/* 1.9 on 11px uppercase mono read as two unrelated lines rather than one
+   two-line note; the rest of the page's mono runs 1.6. */
+.cta__note { font-family: var(--font-mono); font-size: var(--step--2); letter-spacing: 0.14em; text-transform: uppercase; color: var(--bone-ghost); line-height: 1.65; }
+
+/* ══════════════════════ FOOTER ══════════════════════ */
+.footer {
+  border-top: 1px solid var(--line);
+  padding-block: clamp(3rem, 6vw, 5rem) clamp(1.5rem, 3vw, 2.5rem);
+  background: linear-gradient(180deg, transparent, color-mix(in oklab, var(--moss) 60%, transparent));
+}
+/* Shares the three-column track with .footer__cols below it. Under
+   space-between the blurb floated to wherever its own width put it — at 1920
+   its left edge sat 148px right of the "Management" column directly beneath. */
+.footer__top {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2rem; align-items: end; margin-bottom: clamp(2.5rem, 5vw, 4rem);
+}
+.footer__sign { grid-column: 1 / span 2; font-size: clamp(2.2rem, 6.5vw, 5.5rem); line-height: 0.95; color: var(--bone); --track: -0.03em; }
+.footer__sign em { font-style: italic; color: var(--ember); }
+.footer__blurb { grid-column: 3; max-width: 34ch; color: var(--bone-faint); font-size: var(--step--1); }
+@media (max-width: 860px) {
+  .footer__top { grid-template-columns: 1fr; gap: 1.5rem; align-items: start; }
+  .footer__sign, .footer__blurb { grid-column: 1; }
+}
+.footer__cols { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 2rem; padding-bottom: clamp(2rem, 4vw, 3rem); border-bottom: 1px solid var(--line); }
+@media (max-width: 680px) { .footer__cols { grid-template-columns: 1fr; gap: 2.25rem; } }
+.footer__col h3 { font-family: var(--font-mono); font-weight: 400; font-size: var(--step--2); letter-spacing: 0.22em; text-transform: uppercase; color: var(--bone-ghost); margin-bottom: 1rem; }
+.footer__col a, .footer__col p { display: block; font-size: var(--step--1); color: var(--bone-dim); padding-block: 0.28rem; transition: color var(--dur) var(--ease-out); }
+.footer__col a:hover { color: var(--ember); }
+.footer__muted { color: var(--bone-ghost) !important; }
+/* 35px on a phone is not poster scale — drop the signature a tier so it does
+   not go thin and over-tight where it is smallest. */
+@media (max-width: 900px) { .footer__sign { --opsz: var(--opsz-display); --track: -0.018em; } }
+.footer__base { display: flex; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; padding-top: 1.5rem; font-family: var(--font-mono); font-size: var(--step--2); letter-spacing: 0.1em; color: var(--bone-ghost); }
+
+/* ══════════════════════ VIDEO TEXTURE (.vfx) ══════════════════════
+   Poster first, clip fades over it once decoded. Layout never shifts. */
+.vfx { position: relative; overflow: hidden; margin: 0; }
+.vfx video, .vfx img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  opacity: 0; transition: opacity 1200ms var(--ease-out);
+}
+.vfx.is-live video { opacity: 1; }
+/* Poster-only mode keeps the <video> visible: with preload="none" and no src
+   it downloads nothing and paints its poster attribute — hiding it left an
+   empty box for reduced-motion/save-data users. video.js owns the behaviour. */
+.vfx__scrim { position: absolute; inset: 0; pointer-events: none; }
+
+
+/* Service reels inside the services list — one per card, one treatment. */
+.svc__reel {
+  grid-column: 3 / span 2;
+  margin-top: 1.5rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  aspect-ratio: 16 / 10;
+}
+/* Four identical boxes in four identical spots would read as a wall.
+   Odd rows carry their reel one track left (under the name + body columns,
+   2.4fr) and even rows keep it right (body + deliverables, 2.35fr): the same
+   frame, near-equal width, staggered down the list. Desktop only — below
+   1240 every reel takes the single copy column. */
+@media (min-width: 1241px) {
+  .svc:nth-child(odd) .svc__reel { grid-column: 2 / span 2; }
+}
+.svc__reel video {
+  filter: contrast(1.08) saturate(0.9);
+}
+/* Per-clip centring inside the shared 16/10 frame, judged against each
+   clip's own composition (poster and video share a box, so one rule serves
+   both layers of the .vfx). */
+/* 01 · 640x360 compilation, six segments already centre-normalised: the 16/10
+   cover only shaves 5% off each side, and dead centre holds every segment. */
+.svc:nth-child(1) .svc__reel video { object-position: 50% 50%; }
+/* 02 · 640x360 over-shoulder desk. The two DAW monitors sit left of the frame
+   centre (guitar + racks fill the right edge), so the 10% width crop is spent
+   mostly on the right to keep the monitor pair centred in the band. */
+.svc:nth-child(2) .svc__reel video { object-position: 42% 50%; }
+/* 03 · 360x480 PORTRAIT source: the 16/10 cover box shows only ~47% of the
+   frame height. 55% drops the window onto the dual mastering displays with
+   the wooden speaker cube peeking beneath, cropping the bare wall above and
+   the laptop below. */
+.svc:nth-child(3) .svc__reel video { object-position: 50% 55%; }
+.svc:nth-child(4) .svc__reel video {
+  /* Portrait source (540x960) in a 16/10 landscape cell. The cell crops
+     622px of source height; the head top sits at ~55px, so 14% (an 87px
+     top crop) scalped him in every frame AND in the poster. 5% puts the
+     crop line at ~31px: the head clears it with about a fifth of a head
+     of air, which is right for a close-up, at every width (the cell's
+     aspect is fixed, so the source crop is width-independent). */
+  object-position: 50% 5%;
+}
+.svc__reel figcaption {
+  position: absolute; inset-inline: 0; bottom: 0;
+  padding: 2.5rem 1rem 0.8rem;
+  background: linear-gradient(0deg, color-mix(in oklab, var(--void) 92%, transparent), transparent);
+  font-family: var(--font-mono); font-size: var(--step--2);
+  letter-spacing: 0.1em; color: var(--bone-dim);
+}
+/* Stacked, the reel inherits the full copy column — 1070px wide and 668px
+   tall at the breakpoint, which turns a supporting clip into the loudest
+   object in the section. Capped to the same measure the body copy uses. */
+@media (max-width: 1240px) { .svc__reel { grid-column: 2; max-width: 42rem; } }
+@media (max-width: 520px) { .svc__reel { grid-column: 1; } }
+
+/* Gallery cell that happens to be a clip */
+.about__gallery .vfx { border-radius: var(--radius-lg); aspect-ratio: 4 / 3; }
+.about__gallery .vfx video { filter: var(--sheet-grade); transition: filter 700ms var(--ease-out), opacity 1200ms var(--ease-out); }
+.about__gallery .vfx:hover video { filter: none; }
+
+/* ══════════════════════ HERO INTRO TIMELINE ══════════════════════
+   Hidden until hero-intro.js releases each element, so the opening reads as a
+   deliberate title sequence rather than a page that happens to appear. */
+.hero [data-hero-el] {
+  opacity: 0;
+  transform: translate3d(0, 18px, 0);
+  transition: opacity 900ms var(--ease-out), transform 1100ms var(--ease-out);
+}
+.hero [data-hero-el].is-in { opacity: 1; transform: none; }
+
+.hero [data-hero-line] > span {
+  display: block;
+  transform: translate3d(0, 108%, 0) rotate(2.5deg);
+  transform-origin: left bottom;
+  transition: transform 1400ms var(--ease-out);
+}
+.hero [data-hero-line].is-in > span { transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero [data-hero-el] { opacity: 1 !important; transform: none !important; }
+  .hero [data-hero-line] > span { transform: none !important; }
+}
+
+/* ══════════════════════ IN THE ROOM ══════════════════════
+   A full-bleed band of real footage between the hero and the argument.
+   It carries the human proof the hero deliberately leaves to the type + WebGL. */
+.room { position: relative; margin-block: clamp(1rem, 3vw, 2.5rem); }
+.room__reel {
+  position: relative;
+  height: clamp(22rem, 62vh, 40rem);
+  border-block: 1px solid var(--line);
+  background: var(--ink);
+}
+.room__reel video { filter: grayscale(0.55) contrast(1.14) brightness(0.72) sepia(0.16); }
+.room__reel .vfx__scrim {
+  background:
+    linear-gradient(0deg, var(--void) 1%, transparent 45%),
+    linear-gradient(90deg, color-mix(in oklab, var(--void) 88%, transparent) 2%, transparent 45%, color-mix(in oklab, var(--void) 70%, transparent)),
+    radial-gradient(70% 90% at 22% 55%, color-mix(in oklab, var(--ember) 15%, transparent), transparent 65%);
+}
+/* The reel is full-bleed but the caption belongs to the text column. Pinned to
+   `left: var(--gutter)` it tracked the viewport, so past the 1560px shell it
+   drifted away from the line beneath it — 173px adrift at 1920. */
+.room__cap {
+  position: absolute; bottom: 1.1rem;
+  left: max(var(--gutter), calc((100% - var(--maxw)) / 2 + var(--gutter)));
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  font-family: var(--font-mono); font-size: var(--step--2);
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--bone-faint);
+}
+.room__dot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--ember);
+  box-shadow: 0 0 0 0 color-mix(in oklab, var(--ember) 60%, transparent);
+  animation: recPulse 2.6s var(--ease-io) infinite;
+}
+@keyframes recPulse {
+  0%   { box-shadow: 0 0 0 0 color-mix(in oklab, var(--ember) 55%, transparent); }
+  70%  { box-shadow: 0 0 0 9px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+@media (prefers-reduced-motion: reduce) { .room__dot { animation: none; } }
+
+.room__copy { margin-top: clamp(1.75rem, 4vw, 3rem); }
+.room__line {
+  font-size: var(--step-4);        /* 33–48px → display tier */
+  --opsz: var(--opsz-display); --track: -0.018em;
+  line-height: 1.14; color: var(--bone-dim);
+  max-width: 28ch;
+}
+.room__line em { font-style: italic; color: var(--bone); }
+
+/* ══════════════════════ NO-WEBGL FALLBACK ══════════════════════
+   If the GL context can't be created, main.js sets .no-webgl on <html>.
+   A CSS-only approximation of the void keeps the page from going flat black. */
+.no-webgl .stage {
+  background:
+    radial-gradient(70% 55% at 78% 22%, color-mix(in oklab, var(--ember) 13%, transparent), transparent 68%),
+    radial-gradient(60% 50% at 18% 78%, color-mix(in oklab, var(--tide) 10%, transparent), transparent 66%),
+    linear-gradient(180deg, var(--void-2), var(--void) 45%, var(--ink) 100%);
+}
+.no-webgl .stage canvas { display: none; }
+/* No 3D means the sections need a little more of their own presence. */
+.no-webgl .hero { background: radial-gradient(80% 70% at 70% 40%, color-mix(in oklab, var(--ember) 7%, transparent), transparent 70%); }
+
+/* Same treatment when JS is off entirely. */
+.no-js .preloader { display: none; }
+.no-js [data-reveal] { opacity: 1; transform: none; }
+.no-js .line-mask > span,
+.no-js .hero [data-hero-line] > span { transform: none; }
+.no-js .hero [data-hero-el] { opacity: 1; transform: none; }
+.no-js .dock { display: none; }
+
+/* ══════════════════════ BOOKING (Calendly) ══════════════════════ */
+.booking {
+  max-width: 62rem;
+  margin: clamp(2rem, 4vw, 3.5rem) auto 0;
+  text-align: center;
+}
+#calendly-wrapper {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg, 14px);
+  overflow: hidden;
+  background: var(--ink);
+  /* a quiet placeholder while the third-party script wakes up */
+  position: relative;
+}
+#calendly-wrapper:empty::before {
+  content: 'Loading the calendar…';
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  font-family: var(--font-mono); font-size: var(--step--2);
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--bone-ghost);
+}
+#calendly-wrapper iframe { border-radius: inherit; }
+
+.booking__thanks { font-size: var(--step-4); margin-bottom: 1.25rem; color: var(--bone); }
+.video-container {
+  position: relative;
+  padding-top: 56.25%; /* 16:9 */
+  height: 0;
+  overflow: hidden;
+  border-radius: var(--radius-lg, 14px);
+  border: 1px solid var(--line);
+  background: var(--ink);
+}
+.booking__fallback { margin-top: 0.9rem; font-size: var(--step--1); color: var(--bone-faint); }
+.booking__fallback a { color: var(--ember); text-decoration: underline; text-underline-offset: 3px; }
+.booking__form { margin-top: 1.75rem; display: grid; justify-items: center; gap: 1rem; }
+/* The reveal script shows this block with an inline `display: block`, which
+   silently discards the grid and its gap — carry the breathing room as a
+   margin so the intro line and the button never touch. */
+.booking__form p { color: var(--bone-dim); font-size: var(--step-0); margin-bottom: 1rem; }
+.booking__form .btn { margin-bottom: 0; }
+/* Once the calendar is swapped for the confirmation, "Prefer a full tab?
+   Open Calendly" would invite the visitor to book the call they just booked. */
+.booking:has(#calendly-wrapper[style*="display: none"]) .booking__alt { display: none; }
+.booking__alt {
+  margin-top: 1rem;
+  font-family: var(--font-mono); font-size: var(--step--2);
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--bone-ghost);
+}
+.booking__alt a { color: var(--bone-faint); text-decoration: underline; text-underline-offset: 3px; transition: color var(--dur) var(--ease-out); }
+.booking__alt a:hover { color: var(--ember); }
+
+/* ══════════════════════ STUDIO LAYER (hero backdrop) ══════════════════════
+   IMG_2887's acoustic-diffuser wall, graded near-black and screen-blended so
+   only the wood's highlights emerge from the void, with the GL wave field
+   glowing through from beneath. */
+.studio {
+  position: fixed; inset: 0;
+  z-index: 2;                 /* above the GL canvas (0), below main (10) */
+  pointer-events: none;
+  opacity: var(--studio-opacity, 1);
+}
+/* The diffuser wall: a tall architectural band on the right edge. */
+.studio__wall {
+  position: absolute;
+  mix-blend-mode: screen;
+  object-fit: cover;
+  top: 0; right: 0; height: 100%; width: 42%;
+  object-position: 60% 50%;
+  filter: brightness(0.42) contrast(1.5) saturate(0.7) sepia(0.35);
+  opacity: 0.75;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 55%),
+                      linear-gradient(0deg, transparent 2%, #000 30%, #000 78%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(90deg, transparent 0%, #000 55%),
+              linear-gradient(0deg, transparent 2%, #000 30%, #000 78%, transparent 100%);
+  mask-composite: intersect;
+}
+@media (max-width: 780px) {
+  .studio__wall { width: 78%; opacity: 0.55; }
+}

@@ -1,0 +1,123 @@
+/* ============================================================
+   tokens.css — the brand, expressed as variables.
+   Palette per the brand brief: "Bright pastel orange and blue …
+   against black / dark green, the void in which we pull it from."
+   ============================================================ */
+@import url('../assets/fonts/fonts.css');
+
+:root {
+  /* ---- The void ---- */
+  --void:        #040605;
+  --void-2:      #070b09;
+  --ink:         #0a100d;
+  --ink-2:       #0e1613;
+  --moss:        #101a15;   /* dark green cast */
+  --moss-2:      #16241d;
+
+  /* ---- Bleached-by-time light ---- */
+  --bone:        #f4ede2;
+  --bone-dim:    #cfc6b8;
+  --bone-faint:  #a09a8d;   /* 7.2:1 on --void */
+  --bone-ghost:  #85806f;   /* 5.4:1 on --void — AA for the small mono labels */
+
+  /* ---- Energising orange ---- */
+  --ember-100:   #ffe6d0;
+  --ember-300:   #ffc08a;
+  --ember:       #ff9a5a;
+  --ember-600:   #f2743a;
+  --ember-800:   #b84a1e;
+
+  /* ---- Calming blue ---- */
+  --tide-100:    #dff0fb;
+  --tide-300:    #a9d6ee;
+  --tide:        #7fb4ff;
+  --tide-600:    #4d86d8;
+  --tide-800:    #24507f;
+
+  /* ---- Semantics ---- */
+  --bg:          var(--void);
+  --fg:          var(--bone);
+  --muted:       var(--bone-faint);
+  --accent:      var(--ember);
+  --accent-alt:  var(--tide);
+  --line:        color-mix(in oklab, var(--bone) 12%, transparent);
+  --line-strong: color-mix(in oklab, var(--bone) 22%, transparent);
+  --glass:       color-mix(in oklab, var(--bone) 4%, transparent);
+  --glass-2:     color-mix(in oklab, var(--bone) 7%, transparent);
+
+  /* ---- Type ---- */
+  --font-display: 'Fraunces', 'Times New Roman', serif;
+  --font-body:    'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono:    'Space Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* Fraunces variable axes — WONK + low SOFT gives the art-nouveau /
+     old prog-poster warp the brand brief asks for. */
+  --wonk-on:  'SOFT' 30, 'WONK' 1;
+  --wonk-off: 'SOFT' 0,  'WONK' 0;
+
+  /* Optical size tiers. Fraunces' opsz axis runs 9–144 and changes the
+     set width by ~19% end to end: 'Handgloves' is 559px at opsz 40 and
+     471px at opsz 144. Pin the tier to the RENDERED size or the display
+     face reads spindly and over-tight at text sizes, and gappy at poster
+     sizes. Every .display element picks a tier via --opsz. */
+  --opsz-poster:  144;   /* ≳ 64px — hero, section heads, creed */
+  --opsz-display:  72;   /* 34–64px — service names, fork titles */
+  --opsz-title:    40;   /* 20–34px — pull quotes, testimonials */
+  --opsz-text:     20;   /* < 20px  — inline italic accents in body copy */
+
+  /* Section-head rhythm — one system for kicker → heading → lede.
+     --optical-lead puts back the leading that display--tight (0.86) steals:
+     the glyph box of a 93px Fraunces head sits ~17px above its line box, so
+     a nominal 24px kicker gap renders as 7px unless it is compensated. */
+  --head-gap:    1.5rem;
+  --optical-lead: 0.19em;
+  --head-bottom: clamp(2.5rem, 6vw, 5rem);
+
+  /* Fluid scale — clamp(min, preferred, max), 390px → 1600px */
+  --step--2: clamp(0.69rem, 0.66rem + 0.14vw, 0.78rem);
+  --step--1: clamp(0.83rem, 0.78rem + 0.22vw, 0.98rem);
+  --step-0:  clamp(1rem,    0.93rem + 0.32vw, 1.22rem);
+  --step-1:  clamp(1.2rem,  1.09rem + 0.48vw, 1.53rem);
+  --step-2:  clamp(1.44rem, 1.27rem + 0.72vw, 1.91rem);
+  --step-3:  clamp(1.73rem, 1.47rem + 1.06vw, 2.39rem);
+  --step-4:  clamp(2.07rem, 1.7rem  + 1.53vw, 2.99rem);
+  --step-5:  clamp(2.49rem, 1.95rem + 2.18vw, 3.73rem);
+  --step-6:  clamp(2.99rem, 2.23rem + 3.06vw, 4.67rem);
+  --step-7:  clamp(3.58rem, 2.53rem + 4.24vw, 5.83rem);
+  --step-8:  clamp(4.3rem,  2.85rem + 5.83vw, 7.29rem);
+
+  /* ---- Space ---- */
+  --gutter:  clamp(1.25rem, 0.9rem + 1.6vw, 2.75rem);
+  --bay:     clamp(4.5rem, 2.5rem + 8vw, 11rem);   /* section padding */
+  --measure: 62ch;
+  --maxw:    1560px;
+  /* Three radii, and only three. Everything rounded on the page picks one. */
+  --radius:      2px;    /* hairline chips, focus rings */
+  --radius-md:   6px;    /* small framed objects (the stamp) */
+  --radius-lg:  14px;    /* cards, media, panels */
+  --radius-pill: 999px;
+
+  /* ---- Motion ---- */
+  --ease-out:  cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-io:   cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-soft: cubic-bezier(0.33, 1, 0.68, 1);
+  --dur-fast: 180ms;
+  --dur:      420ms;
+  --dur-slow: 900ms;
+
+  /* ---- Depth ---- */
+  --z-canvas: 0;
+  --z-content: 10;
+  --z-player: 60;
+  --z-nav: 70;
+  --z-overlay: 90;
+  --z-cursor: 100;
+
+  --shadow-lift: 0 1px 0 color-mix(in oklab, var(--bone) 8%, transparent),
+                 0 24px 60px -20px rgba(0,0,0,0.85);
+  --shadow-deep: 0 40px 120px -30px rgba(0,0,0,0.95);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur-fast: 1ms; --dur: 1ms; --dur-slow: 1ms; }
+}

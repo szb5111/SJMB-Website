@@ -1,0 +1,668 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shane J. M. Brower · Music Producer &amp; Mix Engineer</title>
+<meta name="description" content="Metal and indie rock production, mixing and mastering out of Jersey City. Shane J. M. Brower builds songs that feel like emotional rollercoasters: cinematic, layered and impossible to put down.">
+<meta name="theme-color" content="#040605">
+<link rel="canonical" href="https://www.shanejmbrower.com/">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/art/mirrors.jpg">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.shanejmbrower.com/">
+<meta property="og:site_name" content="Shane J. M. Brower">
+<meta property="og:title" content="Shane J. M. Brower · Music Producer">
+<meta property="og:description" content="Chaos control for bands with big ideas. Production, mixing, mastering and session work for indie, prog and metal.">
+<!-- Absolute URL: social scrapers do not resolve relative paths. -->
+<meta property="og:image" content="https://www.shanejmbrower.com/assets/img/og-card.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Mythos Amplified. Shane J. M. Brower, music producer, mix engineer and riff wrangler, Jersey City NJ.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.shanejmbrower.com/assets/img/og-card.jpg">
+
+<link rel="preconnect" href="https://calendly.com">
+<link rel="preload" as="font" type="font/woff2" href="assets/fonts/Fraunces-normal-300-900-latin.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="assets/fonts/SpaceGrotesk-normal-300-700-latin.woff2" crossorigin>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/sections.css">
+<link rel="stylesheet" href="styles/player.css">
+<link rel="stylesheet" href="styles/chrome.css">
+<script>document.documentElement.classList.replace('no-js','js');</script>
+
+<script type="importmap">
+{ "imports": {
+  "three": "./vendor/three/build/three.module.js",
+  "three/addons/": "./vendor/three/examples/jsm/"
+} }
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "name": "Shane J. M. Brower",
+  "description": "Music producer, mix engineer and mastering engineer for indie, prog and metal artists.",
+  "url": "https://www.shanejmbrower.com/",
+  "email": "szb5111@gmail.com",
+  "address": { "@type": "PostalAddress", "addressLocality": "Jersey City", "addressRegion": "NJ", "addressCountry": "US" },
+  "areaServed": "Worldwide",
+  "knowsAbout": ["Music production", "Mixing", "Mastering", "Session guitar", "Arrangement"],
+  "founder": { "@type": "Person", "name": "Shane J. M. Brower", "jobTitle": "Producer & Mix Engineer" }
+}
+</script>
+</head>
+
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ══════════════════════ PRELOADER ══════════════════════ -->
+<div class="preloader" id="preloader" role="status" aria-live="polite">
+  <div class="preloader__inner">
+    <div class="preloader__mark" aria-hidden="true">
+      <span class="preloader__glyph">S</span><span class="preloader__glyph">B</span>
+    </div>
+    <div class="preloader__bar"><i id="preload-fill"></i></div>
+    <div class="preloader__meta">
+      <span class="preloader__label">Loading the room</span>
+      <span class="preloader__pct" id="preload-pct">0%</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ WEBGL STAGE ══════════════════════ -->
+<div class="stage" aria-hidden="true">
+  <canvas id="gl"></canvas>
+</div>
+<!-- Studio layer: real room bleeding through the cymatics. Fixed beside the
+     canvas (not inside main) so its screen-blend composites with the WebGL;
+     src/ui/studio-layer.js fades it out as the hero scrolls away. -->
+<div class="studio" id="studio-layer" aria-hidden="true">
+  <img class="studio__wall" src="assets/img/diffuser.jpg" alt="" decoding="async" fetchpriority="low">
+</div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<!-- ══════════════════════ NAV ══════════════════════ -->
+<header class="nav" id="nav">
+  <div class="nav__inner">
+    <a class="nav__brand" href="#top" aria-label="Shane J. M. Brower, home">
+      <span class="nav__brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.4">
+          <circle cx="16" cy="16" r="14.2" opacity=".35"/>
+          <circle cx="16" cy="16" r="8.4" opacity=".6"/>
+          <circle cx="16" cy="16" r="2.4" fill="currentColor" stroke="none"/>
+        </svg>
+      </span>
+      <span class="nav__brand-name">Shane <em>J.&nbsp;M.</em> Brower</span>
+    </a>
+
+    <nav class="nav__links" aria-label="Primary">
+      <a href="#work"><span>Work</span></a>
+      <a href="#approach"><span>Approach</span></a>
+      <a href="#services"><span>Services</span></a>
+      <a href="#about"><span>About</span></a>
+      <a href="#contact"><span>Contact</span></a>
+    </nav>
+
+    <div class="nav__actions">
+      <button class="nav__sound" id="nav-sound" aria-pressed="false" aria-label="Toggle audio">
+        <span class="nav__eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        <span class="nav__sound-label">Sound</span>
+      </button>
+      <a class="btn nav__cta" href="https://calendly.com/szb5111/discovery-call" target="_blank" rel="noopener">
+        Book a call <span class="btn-arrow" aria-hidden="true">→</span>
+      </a>
+      <button class="nav__burger" id="nav-burger" aria-expanded="false" aria-controls="nav-drawer" aria-label="Open menu">
+        <i></i><i></i>
+      </button>
+    </div>
+  </div>
+  <span class="nav__progress" aria-hidden="true"><i id="nav-progress"></i></span>
+</header>
+
+<div class="drawer" id="nav-drawer" inert>
+  <nav class="drawer__links" aria-label="Mobile">
+    <a href="#work"><span class="drawer__n">01</span> Work</a>
+    <a href="#approach"><span class="drawer__n">02</span> Approach</a>
+    <a href="#services"><span class="drawer__n">03</span> Services</a>
+    <a href="#about"><span class="drawer__n">04</span> About</a>
+    <a href="#contact"><span class="drawer__n">05</span> Contact</a>
+  </nav>
+  <div class="drawer__foot">
+    <a class="btn" href="https://calendly.com/szb5111/discovery-call" target="_blank" rel="noopener">Book a call <span class="btn-arrow">→</span></a>
+    <p>Jersey City, NJ · Working worldwide</p>
+  </div>
+</div>
+
+<div id="scroll-content">
+<main id="main">
+
+<!-- ══════════════════════ HERO ══════════════════════ -->
+<section class="hero" id="top" data-scene="hero">
+  <div class="hero__grid shell">
+    <p class="hero__eyebrow" data-hero-el="1">
+      <!-- The EQ lives INSIDE the first role so it can never orphan onto its
+           own line; the <wbr>s are the only legal break points, so narrow
+           viewports wrap between roles instead of clipping the credit. -->
+      <span><span class="hero__eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>Music Producer</span><wbr><span>Mix Engineer</span><wbr><span>Riff Wrangler</span>
+    </p>
+
+    <h1 class="hero__title display display--tight">
+      <span class="line-mask" data-hero-line="1"><span>Mythos</span></span>
+      <span class="line-mask" data-hero-line="2"><span class="hero__title-em">Amplified</span></span>
+    </h1>
+
+    <p class="hero__lede" data-hero-el="2">
+      Chaos control for bands with big ideas. I produce, mix and master songs that feel
+      like emotional rollercoasters: cinematic, layered, and impossible to put down.
+    </p>
+
+    <div class="hero__actions" data-hero-el="3">
+      <a class="btn" href="https://calendly.com/szb5111/discovery-call" target="_blank" rel="noopener">
+        Book a call <span class="btn-arrow" aria-hidden="true">→</span>
+      </a>
+      <button class="hero__play" id="hero-play" aria-label="Play the reel">
+        <span class="hero__play-ring" aria-hidden="true"><i class="hero__play-icon"></i></span>
+        <span class="hero__play-text">Hear the work<em>7 tracks · 28 min</em></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="hero__foot shell" data-hero-el="4">
+    <a class="hero__scroll" href="#approach" aria-label="Scroll to the approach">
+      <span class="hero__scroll-rail" aria-hidden="true"><i></i></span>
+      <span>Scroll</span>
+    </a>
+    <p class="hero__loc"><span>Jersey City, NJ</span><span aria-hidden="true">·</span><span>Working worldwide</span></p>
+  </div>
+</section>
+
+<!-- ══════════════════════ MARQUEE ══════════════════════ -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee__track">
+    <span>Production</span><i>◆</i><span>Mixing</span><i>◆</i><span>Mastering</span><i>◆</i><span>Session Work</span><i>◆</i>
+    <span>Co-writing</span><i>◆</i><span>Arrangement</span><i>◆</i><span>Sound Design</span><i>◆</i>
+    <span>Production</span><i>◆</i><span>Mixing</span><i>◆</i><span>Mastering</span><i>◆</i><span>Session Work</span><i>◆</i>
+    <span>Co-writing</span><i>◆</i><span>Arrangement</span><i>◆</i><span>Sound Design</span><i>◆</i>
+  </div>
+</div>
+
+<!-- ══════════════════════ WORK / PLAYER ══════════════════════ -->
+<section class="work section" id="work" data-scene="work">
+  <div class="shell">
+    <header class="sec-head sec-head--split">
+      <div>
+        <p class="kicker" data-reveal="fade">Hear for Yourself</p>
+        <h2 class="display display--tight work__title" data-reveal="up">Selected<br><em>Work</em></h2>
+      </div>
+      <p class="work__lede lede" data-reveal="up">These fine folks trusted me with their songs. Would you kindly take a listen?</p>
+    </header>
+
+    <!-- The player is built by src/ui/player.js into this mount. -->
+    <div class="player" id="player" data-player>
+      <noscript><p class="work__noscript">Enable JavaScript to play the reel, or listen at <a href="https://www.shanejmbrower.com/">shanejmbrower.com</a>.</p></noscript>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ IN THE ROOM ══════════════════════ -->
+<section class="room" aria-label="In the studio">
+  <figure class="vfx room__reel">
+    <video data-src="assets/video/riff.mp4" poster="assets/img/poster-riff.jpg" muted loop playsinline preload="none" aria-label="Shane tracking a guitar riff in the studio"></video>
+    <span class="vfx__scrim"></span>
+    <figcaption class="room__cap">
+      <span class="room__dot" aria-hidden="true"></span>
+      <span>Tracking a lead · Jersey City</span>
+    </figcaption>
+  </figure>
+  <div class="room__copy shell">
+    <p class="room__line display">If the part isn’t written yet,<br><em>I’ll pick up a guitar and write it with you.</em></p>
+  </div>
+</section>
+
+<!-- ══════════════════════ CHAOS / CONTROL ══════════════════════ -->
+<section class="chaos section" id="approach" data-scene="chaos">
+  <div class="shell">
+    <header class="sec-head">
+      <p class="kicker" data-reveal="fade">The Problem</p>
+      <h2 class="chaos__title display display--tight" data-reveal="up">
+        <span class="chaos__word chaos__word--a">Chaos</span><span class="chaos__slash" aria-hidden="true">/</span><span class="chaos__word chaos__word--b">Control</span>
+      </h2>
+    </header>
+
+    <div class="chaos__body grid12">
+      <div class="chaos__lede prose" data-reveal="up">
+        <p class="lede">Anyone can stack riffs and call it “a song.” But if it doesn’t take the listener on an adventure, it falls flat.</p>
+        <p>Big, wild ideas are hard to turn into something thoughtful and captivating without it sounding like a jumbled mess.</p>
+      </div>
+      <aside class="chaos__stamp" data-reveal="fade" aria-hidden="true">
+        <span class="chaos__stamp-label">Verdict</span>
+        <span class="chaos__stamp-word">Riff&nbsp;Salad</span>
+      </aside>
+    </div>
+
+    <p class="chaos__fork-intro" data-reveal="fade">That’s the difference between:</p>
+
+    <div class="fork" data-reveal="up">
+      <article class="fork__card fork__card--good">
+        <span class="fork__tag">The goal</span>
+        <h3 class="fork__title display">An intentional<em> Kubrick masterpiece</em></h3>
+        <p>Every frame earns its place. Nothing is there by accident, and you feel the shape of it before you can explain it.</p>
+        <span class="fork__meter" aria-hidden="true"><i style="--v:.94"></i><i style="--v:.71"></i><i style="--v:.88"></i><i style="--v:.62"></i><i style="--v:1"></i><i style="--v:.79"></i></span>
+      </article>
+      <span class="fork__or" aria-hidden="true">or</span>
+      <article class="fork__card fork__card--bad">
+        <span class="fork__tag">The trap</span>
+        <h3 class="fork__title display">A gaudy<em> Michael Bay car crash</em></h3>
+        <p>Cool for about ninety seconds. Then it’s just loud: a five-minute explosion with nothing holding it together.</p>
+        <span class="fork__meter fork__meter--noise" aria-hidden="true"><i style="--v:.98"></i><i style="--v:.95"></i><i style="--v:1"></i><i style="--v:.92"></i><i style="--v:.99"></i><i style="--v:.96"></i></span>
+      </article>
+    </div>
+
+    <div class="chaos__resolve grid12">
+      <div class="chaos__resolve-copy prose" data-reveal="up">
+        <p>That’s where I nerd out. I think about music the way a director thinks about a film: the tension, the release, the scene changes that keep your fans glued to their headphones.</p>
+        <p>If you’ve got a ton of influences, my goal is to make them feel like they <em class="emph">grew up together</em>. If your “big cinematic idea” is more spectacle than story, I’ll shape it into something people come back to again and again and again.</p>
+      </div>
+      <blockquote class="chaos__closer" data-reveal="up">
+        <p class="chaos__closer-pre">Because for me, all the nerdy little details serve one purpose:</p>
+        <p class="chaos__closer-line display">Holding a mirror to intention…</p>
+        <p class="chaos__closer-line chaos__closer-line--2 display">and letting it crawl through.</p>
+      </blockquote>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ PURPOSE ══════════════════════ -->
+<section class="purpose section" id="purpose" data-scene="purpose">
+  <!-- IMG_2890's hand-drawn sun/wave artwork, graded into the void the same
+       way the hero diffuser is: a right-edge band emerging faintly from the
+       dark. Decorative only, so no data-reveal and empty alt. -->
+  <img class="purpose__art" src="assets/img/approach-art.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async">
+  <div class="shell">
+    <div class="purpose__top grid12">
+      <header class="purpose__head">
+        <p class="kicker kicker--blue" data-reveal="fade">The Approach</p>
+        <h2 class="display display--tight purpose__title" data-reveal="up">Your Goal,<br><em>My Purpose</em></h2>
+      </header>
+      <div class="purpose__copy prose" data-reveal="up">
+        <p class="lede">Working with me isn’t a conveyor belt. Whether you’re in the room or sending tracks from across the ocean:</p>
+        <p class="purpose__pull">I want you to feel like I’m part of your band.</p>
+        <p>That means asking questions, digging into your influences, tossing around ideas, and caring about the details as much as you do.</p>
+        <p>Oh, and probably making fun of each other. A lot.</p>
+      </div>
+    </div>
+
+    <ol class="principles">
+      <li class="principle" data-reveal="up" style="--reveal-delay:0ms">
+        <span class="principle__n">01</span>
+        <h3 class="principle__t">Storyboard first</h3>
+        <p class="principle__d">We map what the listener should feel in every bar before a single part gets tracked.</p>
+      </li>
+      <li class="principle" data-reveal="up" style="--reveal-delay:90ms">
+        <span class="principle__n">02</span>
+        <h3 class="principle__t">Serve the song</h3>
+        <p class="principle__d">Whatever is done on the song serves the song; not our ego.</p>
+      </li>
+      <li class="principle" data-reveal="up" style="--reveal-delay:180ms">
+        <span class="principle__n">03</span>
+        <h3 class="principle__t">Extra member</h3>
+        <p class="principle__d">I co-write, arrange and play. Screams, mathy leads, synth beds: whatever the story needs.</p>
+      </li>
+      <li class="principle" data-reveal="up" style="--reveal-delay:270ms">
+        <span class="principle__n">04</span>
+        <h3 class="principle__t">Open book</h3>
+        <p class="principle__d">No gatekeeping, no velvet rope. You get the real answer, every time.</p>
+      </li>
+    </ol>
+
+    <p class="purpose__closer display" data-reveal="up">
+      Long story short: the process should feel <em>energising and personal</em>, not rushed or transactional.
+    </p>
+  </div>
+</section>
+
+<!-- ══════════════════════ SERVICES ══════════════════════ -->
+<section class="services section" id="services" data-scene="services">
+  <div class="shell">
+    <header class="sec-head sec-head--split">
+      <div>
+        <p class="kicker" data-reveal="fade">The Sauce</p>
+        <h2 class="display display--tight" data-reveal="up">What I Do</h2>
+      </div>
+      <p class="lede" data-reveal="up">Four ways in. Most projects start with a call and end up somewhere none of us predicted, in the best way.</p>
+    </header>
+
+    <div class="svc-list">
+      <article class="svc" data-reveal="up">
+        <span class="svc__n">01</span>
+        <div class="svc__head">
+          <h3 class="svc__name display">Production</h3>
+          <span class="svc__tag">Sketch → Masterpiece</span>
+        </div>
+        <p class="svc__body">The Holy Grail. Choose-your-adventure, all-access, I-want-it-that-way. From pre-production through mastering, we take your song from a voice memo to the thing that defines this era of you.</p>
+        <ul class="svc__list"><li>Pre-production &amp; storyboarding</li><li>Arrangement &amp; co-writing</li><li>Tracking &amp; performance coaching</li><li>Full delivery</li></ul>
+        <figure class="vfx svc__reel">
+          <video data-src="assets/video/svc-production.mp4" poster="assets/img/poster-svc-production.jpg" muted loop playsinline preload="none"></video>
+          <figcaption>Pre-pro to print. One take of the whole ride.</figcaption>
+        </figure>
+      </article>
+
+      <article class="svc" data-reveal="up">
+        <span class="svc__n">02</span>
+        <div class="svc__head">
+          <h3 class="svc__name display">Mixing</h3>
+          <span class="svc__tag">Show you who you are</span>
+        </div>
+        <p class="svc__body">Just like what defines a great director, I take what you give me and show you who you are. With a couple of solid references, we get your tracks living in the right colorspace.</p>
+        <ul class="svc__list"><li>Emotional automation</li><li>Depth &amp; dimension</li><li>Reference matching</li><li>Stems &amp; recalls</li></ul>
+        <figure class="vfx svc__reel">
+          <video data-src="assets/video/svc-mixing.mp4" poster="assets/img/poster-svc-mixing.jpg" muted loop playsinline preload="none"></video>
+          <figcaption>In the mix: automation passes on the strings.</figcaption>
+        </figure>
+      </article>
+
+      <article class="svc" data-reveal="up">
+        <span class="svc__n">03</span>
+        <div class="svc__head">
+          <h3 class="svc__name display">Mastering</h3>
+          <span class="svc__tag">Good → Undeniable</span>
+        </div>
+        <p class="svc__body">Good is good, but it could be better. The mix is great, it’s just missing some luster. Send it over and let’s get it sitting on par with the heavy hitters in your scene.</p>
+        <ul class="svc__list"><li>Loudness &amp; translation</li><li>Tonal polish</li><li>Sequencing &amp; spacing</li><li>All delivery formats</li></ul>
+        <figure class="vfx svc__reel">
+          <video data-src="assets/video/svc-mastering.mp4" poster="assets/img/poster-svc-mastering.jpg" muted loop playsinline preload="none"></video>
+          <figcaption>The final polish: loud, warm, and true on every speaker.</figcaption>
+        </figure>
+      </article>
+
+      <article class="svc" data-reveal="up">
+        <span class="svc__n">04</span>
+        <div class="svc__head">
+          <h3 class="svc__name display">Session Work</h3>
+          <span class="svc__tag">MOAR!!!</span>
+        </div>
+        <p class="svc__body">I need more! Guitar, bass, singing, screaming, drum and synth programming, post-production, and more. Let’s get your track more layers than a cake.</p>
+        <ul class="svc__list"><li>Guitar &amp; bass</li><li>Screams &amp; backing vocals</li><li>Drum &amp; synth programming</li><li>Sound design &amp; textures</li></ul>
+        <figure class="vfx svc__reel">
+          <video data-src="assets/video/screams.mp4" poster="assets/img/poster-screams.jpg" muted loop playsinline preload="none"></video>
+          <figcaption>That’s me on the mic. Yes, I’ll do the scream.</figcaption>
+        </figure>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ TESTIMONIALS ══════════════════════ -->
+<section class="proof section" data-scene="proof">
+  <div class="shell">
+    <header class="sec-head">
+      <p class="kicker kicker--blue" data-reveal="fade">Testimonials</p>
+      <h2 class="display display--tight" data-reveal="up">Artists like <em>You</em></h2>
+    </header>
+
+    <div class="proof__rail" id="proof-rail">
+      <figure class="quote" data-reveal="up">
+        <blockquote class="quote__text display">I adore what you did on these drums. What you brought out made me hear things I couldn’t even hear before.</blockquote>
+        <figcaption class="quote__by">
+          <img class="quote__pic" src="assets/img/testimonial-akinola.jpg" alt="" width="72" height="72" loading="lazy" decoding="async">
+          <span><b>Akinola Pedro</b><i>Recording Artist</i></span>
+        </figcaption>
+      </figure>
+
+      <figure class="quote" data-reveal="up" style="--reveal-delay:80ms">
+        <blockquote class="quote__text display">I’ve legit never sounded better.</blockquote>
+        <figcaption class="quote__by">
+          <img class="quote__pic" src="assets/img/testimonial-rico.jpg" alt="" width="72" height="72" loading="lazy" decoding="async">
+          <span><b>Rico Cabredo</b><i>Singer-Songwriter</i></span>
+        </figcaption>
+      </figure>
+
+      <figure class="quote" data-reveal="up" style="--reveal-delay:160ms">
+        <blockquote class="quote__text display">Everything is sitting neatly, it’s clear and defined. A very enjoyable listen.</blockquote>
+        <figcaption class="quote__by">
+          <span class="quote__pic quote__pic--initials" aria-hidden="true">GM</span>
+          <span><b>Greg Morel</b><i>Artist</i></span>
+        </figcaption>
+      </figure>
+
+      <figure class="quote" data-reveal="up" style="--reveal-delay:240ms">
+        <blockquote class="quote__text display">It was a nice and fun experience, working with you on the other half of the world.</blockquote>
+        <figcaption class="quote__by">
+          <img class="quote__pic" src="assets/img/testimonial-cathy.jpg" alt="" width="72" height="72" loading="lazy" decoding="async">
+          <span><b>Cathy Daniels</b><i>Vocalist</i></span>
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ ABOUT ══════════════════════ -->
+<section class="about section" id="about" data-scene="about">
+  <div class="shell">
+    <div class="about__grid">
+      <figure class="about__portrait" data-reveal="fade">
+        <img src="assets/img/portrait-a.jpg" alt="Shane J. M. Brower" width="1050" height="1400" loading="lazy" decoding="async">
+        <figcaption>Shane J. M. Brower · Jersey City, NJ</figcaption>
+      </figure>
+
+      <div class="about__copy">
+        <p class="kicker" data-reveal="fade">About</p>
+        <h2 class="display display--tight about__title" data-reveal="up">Producer.<br>Mix Engineer.<br><em>Riff Wrangler.</em></h2>
+        <div class="prose" data-reveal="up">
+          <p>Shane J. M. Brower is more than just an engineer. He’s an Audio Aficionado out of Jersey City, NJ, partnering with indie and metal artists to enhance their current sound and evolve it. He’s your band’s extra member, consolidating and actualising your ideas into emotional rollercoasters.</p>
+          <p>After decades writing songs and self-recording, Shane became drawn to the importance of storytelling: using production to further the impact of the message being told. For years he mixed live band recordings, making tracks with loads of bleed sound like full-blown albums. That devotion to polishing raw, live performance honed his ability to sculpt an artist’s sonic vision.</p>
+          <p>Your music is the deepest reflection of yourself. By leaning into your influences (bands, artists, video games, films) you can make music that truly represents your vision. Through storytelling and harnessing that influence, he’ll have you wielding your voice as a weapon.</p>
+        </div>
+
+        <dl class="about__facts" data-reveal="up">
+          <div><dt>Based</dt><dd>Jersey City, NJ</dd></div>
+          <div><dt>Works with</dt><dd>Indie · Prog · Metal</dd></div>
+          <div><dt>Remote</dt><dd>Worldwide</dd></div>
+          <div><dt>Also plays</dt><dd>Guitar, bass, screams</dd></div>
+        </dl>
+      </div>
+    </div>
+
+    <blockquote class="creed" data-reveal="up">
+      <p class="creed__text display">I am not trying to make your song.<br>I am trying to make <em>Star Wars</em>.</p>
+      <cite>Borrowed from Sam Pura, and taken very seriously.</cite>
+    </blockquote>
+
+    <div class="about__gallery" data-reveal="up">
+      <figure><img src="assets/img/studio-desk.jpg" alt="Shane at the console" width="800" height="600" loading="lazy" decoding="async"></figure>
+      <figure class="vfx"><video data-src="assets/video/riff.mp4" poster="assets/img/poster-riff.jpg" muted loop playsinline preload="none" aria-label="Shane tracking a guitar riff"></video></figure>
+      <figure><img src="assets/img/live-stage.jpg" alt="A live band on stage under purple light" width="800" height="600" loading="lazy" decoding="async"></figure>
+      <figure><img src="assets/img/studio-rig.jpg" alt="The recording rig" width="800" height="600" loading="lazy" decoding="async"></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ CTA ══════════════════════ -->
+<section class="cta section" id="contact" data-scene="cta">
+  <div class="shell">
+    <p class="kicker" data-reveal="fade">Let’s Talk</p>
+    <h2 class="cta__title display display--tight" data-reveal="up">Interested in<br>working <em>together?</em></h2>
+
+    <div class="cta__ladder" data-reveal="up">
+      <p>Some people get you. Some don’t.</p>
+      <p>Some approximate who they <em class="emph">think</em> you are.</p>
+      <p>This is true of the producers, mixers and engineers behind you.</p>
+      <p>You can get good results from anyone…</p>
+      <p class="cta__punch">but connecting with a <em>team</em> is what brings out the truest version of yourself.</p>
+    </div>
+
+    <div class="cta__act" data-reveal="up">
+      <p class="cta__note">Free, 45 minutes, no pitch deck.<br>Bring a demo and a band you love.</p>
+    </div>
+
+    <!-- Calendly booking widget -->
+    <div class="booking" data-reveal="up">
+      <div id="calendly-wrapper" style="min-width:320px; height:700px;"></div>
+
+      <!-- Confirmation video (initially hidden) -->
+      <div id="confirmation-video" style="display:none;">
+        <h2 class="booking__thanks display display--md">Thanks for booking!</h2>
+        <div class="video-container">
+          <iframe
+            id="thankyou-video"
+            title="Thanks for booking — next steps"
+            allow="autoplay; encrypted-media; picture-in-picture"
+            allowfullscreen
+            loading="eager"
+            referrerpolicy="origin-when-cross-origin"
+            style="position:absolute; inset:0; width:100%; height:100%; border:0;"
+          ></iframe>
+        </div>
+
+        <p id="video-fallback" class="booking__fallback" style="display:none;">
+          If the video doesn’t load,
+          <a href="https://youtu.be/PJmQjqcl3fU" target="_blank" rel="noopener">
+            click here to watch it on YouTube
+          </a>.
+        </p>
+
+        <!-- Google Form link -->
+        <div id="google-form-link" class="booking__form" style="display:none;">
+          <p>Before our call, please fill out this short form:</p>
+          <a class="btn"
+             href="https://docs.google.com/forms/d/e/1FAIpQLSfTb94t4gtp9VSeWPLJyBznorzXmvll1eCGfpGKGFujfcFsuw/viewform"
+             target="_blank"
+             rel="noopener">
+             Discovery Form <span class="btn-arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+
+      <p class="booking__alt">
+        Prefer a full tab?
+        <a href="https://calendly.com/szb5111/discovery-call" target="_blank" rel="noopener">Open Calendly ↗</a>
+      </p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ══════════════════════ FOOTER ══════════════════════ -->
+<footer class="footer">
+  <div class="shell">
+    <div class="footer__top">
+      <p class="footer__sign display" aria-hidden="true">Shane <em>J.&nbsp;M.</em> Brower</p>
+      <p class="footer__blurb">Metal &amp; indie production, mixing and mastering out of Jersey City, working with artists worldwide.</p>
+    </div>
+    <div class="footer__cols">
+      <div class="footer__col">
+        <h3>Site</h3>
+        <a href="#work">Work</a><a href="#approach">Approach</a><a href="#services">Services</a><a href="#about">About</a>
+      </div>
+      <div class="footer__col">
+        <h3>Contact</h3>
+        <a href="mailto:szb5111@gmail.com">szb5111@gmail.com</a>
+        <a href="https://calendly.com/szb5111/discovery-call" target="_blank" rel="noopener">Book a call</a>
+      </div>
+      <div class="footer__col">
+        <h3>Management</h3>
+        <p>Carl Bahner</p>
+        <a href="mailto:carl@studiolandmgmt.com">carl@studiolandmgmt.com</a>
+        <p class="footer__muted">Studio Land Management</p>
+      </div>
+    </div>
+    <div class="footer__base">
+      <p>© <span id="year">2026</span> Shane J. M. Brower. All rights reserved.</p>
+      <p class="footer__colophon">Built with WebGL. Best with headphones.</p>
+    </div>
+  </div>
+</footer>
+</div><!-- /#scroll-content -->
+
+<!-- ══════════════════════ PERSISTENT PLAYER DOCK ══════════════════════ -->
+<div class="dock" id="dock" hidden></div>
+
+<script type="module" src="src/main.js"></script>
+
+<!-- Calendly embed script -->
+<script src="https://assets.calendly.com/assets/external/widget.js" async></script>
+
+<script>
+(function() {
+  // Calendly booking link, themed to match the site.
+  var CALENDLY_URL = "https://calendly.com/szb5111/discovery-call"
+    + "?hide_gdpr_banner=1&background_color=0a100d&text_color=f4ede2&primary_color=ff9a5a";
+
+  // Wait for Calendly API to be ready
+  function whenCalendlyReady(cb, tries){
+    tries = tries || 40;
+    if (window.Calendly && Calendly.initInlineWidget) return cb();
+    if (tries <= 0) return;
+    setTimeout(function(){ whenCalendlyReady(cb, tries - 1); }, 100);
+  }
+
+  // Render Calendly inline widget
+  whenCalendlyReady(function(){
+    var parent = document.getElementById('calendly-wrapper');
+    if (!parent) return;
+    Calendly.initInlineWidget({ url: CALENDLY_URL, parentElement: parent });
+  });
+
+  // Show the video after a booking is scheduled
+  function showConfirmationVideo() {
+    var wrapper = document.getElementById('calendly-wrapper');
+    var container = document.getElementById('confirmation-video');
+    var iframe = document.getElementById('thankyou-video');
+    var fallback = document.getElementById('video-fallback');
+    var formLink = document.getElementById('google-form-link');
+
+    if (wrapper) wrapper.style.display = 'none';
+    if (container) container.style.display = 'block';
+    if (formLink) formLink.style.display = 'block';
+
+    // Main and fallback embed URLs
+    var primary = "https://www.youtube.com/embed/PJmQjqcl3fU?autoplay=1&mute=1&rel=0";
+    var secondary = "https://www.youtube-nocookie.com/embed/PJmQjqcl3fU?autoplay=1&mute=1&rel=0";
+
+    var triedSecondary = false;
+    var loaded = false;
+
+    function markLoaded(){ loaded = true; }
+    iframe.onload = markLoaded;
+
+    iframe.src = primary;
+
+    // Retry and fallback logic
+    setTimeout(function(){
+      if (loaded) return;
+      if (!triedSecondary) {
+        triedSecondary = true;
+        iframe.src = secondary;
+        setTimeout(function(){
+          if (!loaded && fallback) fallback.style.display = 'block';
+        }, 2500);
+      } else {
+        if (fallback) fallback.style.display = 'block';
+      }
+    }, 3000);
+
+    try { container.scrollIntoView({ behavior:'smooth', block:'start' }); } catch(e){}
+  }
+
+  // Listen for Calendly confirmation message
+  window.addEventListener('message', function (e) {
+    if (!e || !e.data) return;
+    if (typeof e.data === 'object' && e.data.event === 'calendly.event_scheduled') {
+      showConfirmationVideo();
+    } else if (typeof e.data === 'string') {
+      try {
+        var msg = JSON.parse(e.data);
+        if (msg && msg.event === 'calendly.event_scheduled') showConfirmationVideo();
+      } catch (_) {}
+    }
+  }, false);
+})();
+</script>
+</body>
+</html>
