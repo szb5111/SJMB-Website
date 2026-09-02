@@ -2,14 +2,6 @@
 .DS_Store
 Thumbs.db
 
-# Media stays out of the repo for now: GitHub holds the code, the site's
-# audio/video/photos live locally in assets/ (see README). Fonts and the
-# favicon stay committed -- they are part of the design system, not media.
-assets/audio/
-assets/video/
-assets/img/
-assets/art/
-
 # Raw source material (camera originals, session bounces, photo dumps)
 Music/
 music/

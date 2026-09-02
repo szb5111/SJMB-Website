@@ -1,0 +1,20 @@
+# Static site, no build step: publish the repo root as-is.
+[build]
+  publish = "."
+
+# Fingerprint-free but effectively immutable media and vendored libs:
+# long cache so repeat visits stream nothing twice.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/vendor/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"

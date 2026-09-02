@@ -18,14 +18,10 @@ The only requirement is that `.js` files are served as `text/javascript`.
 
 ## What's in the repo
 
-The GitHub repo holds the **code only** — HTML, CSS, JS, vendored three.js,
-fonts and the favicon. The media the site serves (`assets/audio/`,
-`assets/video/`, `assets/img/`, `assets/art/`) is intentionally not committed;
-it lives alongside the code locally. A fresh clone renders and runs, but the
-player, reels and photography need those four folders dropped into `assets/`
-(or the `.gitignore` entries removed and the media committed) before the site
-is complete. Deploying straight from this repo alone will ship a site without
-its media.
+Everything the site serves: code, fonts, and the web-ready media in `assets/`
+(audio, video, photography, cover art). The repo IS the deployable site --
+`netlify.toml` publishes the root with no build step. Only raw source material
+(camera originals, session bounces) is gitignored.
 
 ## Layout
 
