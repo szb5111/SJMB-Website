@@ -289,6 +289,7 @@ let ampCur = 0.9;
 let beatEnv = 0, beatPrev = 0, beatT = 9;
 let mx = 0, my = 0, mxT = 0, myT = 0;   // mouse parallax, current + target
 let dolly = 0;
+let narrow = false;   // w <= 780: stacked-type layout, calmer field
 let baseOpacity = 1, spanX = 9.5;
 let dimEdge0 = -0.62, dimEdge1 = 0.28, dimFloor = 0.16;
 let crossTimer = 0;
@@ -481,7 +482,7 @@ export default {
        brightest crossings then braid BELOW the lede instead of behind it
        (measured at 390x844: lede bottom sits at y-frac 0.58; the hottest
        crossing pair lands at ~0.58-0.66 after this shift). */
-    uniforms.uYOff.value = mapc(aspect, 0.7, 1.7, -1.5, -0.15) - (w <= 780 ? 0.8 : 0);
+    uniforms.uYOff.value = mapc(aspect, 0.7, 1.7, -1.5, -0.15) - (w <= 780 ? 1.3 : 0);
 
     /* Additive overdraw scales inversely with frame width: the same 70k
        particles squeeze into a spanX that shrinks with aspect, so a phone
@@ -489,7 +490,7 @@ export default {
        traces on a desktop. Attenuate energy below aspect ~0.95 (measured:
        390x844 hit mean 118/255 mid-field before this). */
     baseOpacity = mapc(aspect, 0.95, 1.45, 0.9, 1.0)
-                * mapc(aspect, 0.45, 0.95, 0.42, 1.0);
+                * mapc(aspect, 0.45, 0.95, 0.28, 1.0);
 
     /* The left-dim ramp must agree with the CSS layout, which stacks the
        hero type (freeing the left) at w <= 780px - NOT at aspect 1.0. A
@@ -502,6 +503,7 @@ export default {
        very wide screens once the rem cap freezes the type. So the ramp has
        to stay LOW until past xn = 0.1 and open fully by ~0.6 - the old
        (-0.62, 0.28) edges were done ramping before the italic 'd' ended. */
+    narrow = w <= 780;
     if (w <= 780) {
       dimEdge0 = -3.0; dimEdge1 = -2.5; dimFloor = 1.0;   // ramp fully open
     } else {
@@ -516,7 +518,7 @@ export default {
     const dpr = ctxRef.sizes.dpr || 1;
     uniforms.uPixelScale.value = (h * dpr * 0.5) / Math.tan(fov * 0.5);
     uniforms.uSize.value = 0.036 * mapc(aspect, 0.95, 1.9, 0.88, 1.0)
-                                 * mapc(aspect, 0.45, 0.95, 0.72, 1.0);
+                                 * mapc(aspect, 0.45, 0.95, 0.62, 1.0);
 
     crossTimer = 0;   // re-weight the crossings for the new composition ramps
   },
@@ -529,8 +531,10 @@ export default {
     // the viewport), which is what we want the fade to start from.
     const prog = rec ? rec.progress : 0.5;
 
-    /* ── Scroll: recede and fade as the hero leaves ───────────────────────── */
-    const leave = smoothstep(0.52, 0.95, prog);
+    /* ── Scroll: recede and fade as the hero leaves. Narrow screens fade
+       sooner and finish sooner: the stacked layout puts the next section
+       one short swipe away, and the field must be gone when it arrives. */
+    const leave = narrow ? smoothstep(0.50, 0.72, prog) : smoothstep(0.52, 0.95, prog);
     dolly = damp(dolly, leave * 5.5, 4, dt);
     const targetOpacity = baseOpacity * (1 - leave);
 

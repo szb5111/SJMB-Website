@@ -229,6 +229,9 @@ main, .footer { position: relative; z-index: var(--z-content); }
 .marquee__track i { color: var(--ember); font-size: 0.6em; font-style: normal; letter-spacing: 0; }
 .marquee:hover .marquee__track { animation-play-state: paused; }
 @keyframes marquee { to { transform: translateX(-50%); } }
+/* On phones the hero, waves and marquee stack into one crowded viewport;
+   the strip is decorative filler, so it sits this layout out. */
+@media (max-width: 780px) { .marquee { display: none; } }
 @media (prefers-reduced-motion: reduce) {
   .marquee__track { animation: none; }
   .hero__scroll-rail i { animation: none; height: 100%; opacity: 0.5; }
