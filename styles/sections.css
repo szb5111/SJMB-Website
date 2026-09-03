@@ -999,7 +999,7 @@ main, .footer { position: relative; z-index: var(--z-content); }
   object-fit: cover;
   top: 0; right: 0; height: 100%; width: 42%;
   object-position: 60% 50%;
-  filter: brightness(0.46) contrast(1.5) saturate(0.7) sepia(0.35);
+  filter: brightness(0.44) contrast(1.5) saturate(0.7) sepia(0.35);
   opacity: 0.75;
   -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 55%),
                       linear-gradient(0deg, transparent 2%, #000 30%, #000 78%, transparent 100%);
